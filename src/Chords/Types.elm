@@ -1,7 +1,13 @@
-module Chords.Types exposing (..)
+module Chords.Types exposing ( StringInfo
+                               , Note
+                               , Barre
+                               , Fingering(..)
+                               , rootNote
+                               , plainNote
+                              )
 
 type alias StringInfo =
-    { notes: List Note }
+    { notes: List Fingering }
 
 type Fingering
     = Single Note
@@ -23,15 +29,15 @@ type alias Barre =
     }
 
 -- helper to generate a Note that is signified as the root of the chord
-rootNote : Int -> Int -> Note
+rootNote : Int -> Int -> Fingering
 rootNote fret finger =
-    Note fret finger False True
+    Single ( Note fret finger False True )
 
 
 -- helper to generate a Note that is a plain old regular note
-plainNote : Int -> Int -> Note
+plainNote : Int -> Int -> Fingering
 plainNote fret finger =
-    Note fret finger False False
+    Single ( Note fret finger False False )
 
 
 

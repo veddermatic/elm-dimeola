@@ -11,7 +11,7 @@ import Json.Decode as Json
 
 -- my imports
 import Chords.FormI exposing(formI)
-import Chords.Types exposing(StringInfo, Note)
+import Chords.Types exposing(StringInfo, Note, Fingering(..))
 
 -- Gives a list of all the names of all the chords. Well, at least the
 -- ones in the book.
@@ -167,30 +167,35 @@ drawStrings stringData =
 -- Creates a circle with a finger number in it. Will be fancy colored if it
 -- is the root note.
 -- TODO: Magic numbers. 
-dot : Note -> Html Msg
-dot note =
-    let
-        fillColor =
-            if note.rootNote then
-               "#7565b7"
-            else
-               "#333333"
-        ypos = toString (note.fret * 45)
-    in
-       Svg.g []
-           [ Svg.circle [ cx "0"
-                        , cy ypos
-                        , r "15"
-                        , fill fillColor
-                        ] []
-           , Svg.text_ [ x "0"
-                      , y ypos
-                      , dy "5"
-                      , fontSize "16"
-                      , textAnchor "middle"
-                      , fill "#ffffff"
-                      ] [ text (toString note.finger) ]
-           ]
+dot : Fingering -> Html Msg
+dot fingering =
+    case fingering of
+        Single note ->
+            let
+                fillColor =
+                    if note.rootNote then
+                        "#7565b7"
+                    else
+                        "#333333"
+                ypos = toString (note.fret * 45)
+            in
+                Svg.g []
+                [ Svg.circle [ cx "0"
+                    , cy ypos
+                    , r "15"
+                    , fill fillColor
+                    ] []
+                    , Svg.text_ [ x "0"
+                    , y ypos
+                    , dy "5"
+                    , fontSize "16"
+                    , textAnchor "middle"
+                    , fill "#ffffff"
+                    ] [ text (toString note.finger) ]
+                ]
+
+        Barred barre ->
+            Svg.g [][]
 
 
 
