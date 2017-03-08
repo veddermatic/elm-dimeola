@@ -1,6 +1,7 @@
 module ChordBook exposing (..)
 
 import Html exposing (Html, text, li, ul, div, program)
+import Html.Attributes exposing (..)
 import Messages exposing (Msg(..))
 
 import Chords.Views as Chords 
@@ -10,15 +11,16 @@ import Chords.Views as Chords
 
 type alias Model =
     { selectedChord: String
-    , selectedPosition: String
+    , selectedForm: String
     , selectedKey: String
     }
+
 
 -- outputs the default model for our init function
 initialModel : Model
 initialModel = 
-    { selectedChord = "7"
-    , selectedPosition = "I"
+    { selectedChord = "Major"
+    , selectedForm = "II"
     , selectedKey = "G"
     }
 
@@ -41,16 +43,26 @@ update msg model =
         SelectChord chord ->
             ( { model | selectedChord = chord }, Cmd.none )
 
+        SelectForm form ->
+            ( { model | selectedForm = form }, Cmd.none )
 
+
+chordInfo : Model -> String
+chordInfo model =
+    "Form " ++ model.selectedForm ++ " : " ++ model.selectedChord
 
 -- VIEW
 view: Model -> Html Msg
 view model =
-    div []
-        [ ul [] ( Chords.chordListView model.selectedKey ) 
-        , Chords.chordDiagram model.selectedPosition model.selectedChord
-        , div [] [ text model.selectedChord ]
-        , div [] [ text model.selectedKey ]
+    div [ style [("display", "flex")
+                , ("justify-content", "space-around")
+                , ("font-family", "Helvetica")
+                ] 
+        ]
+        [ ul [] Chords.chordListView
+        , ul [] Chords.formListView
+        , Chords.chordDiagram model.selectedForm model.selectedChord
+        , div [] [ text (chordInfo model) ]
         ]
 
 

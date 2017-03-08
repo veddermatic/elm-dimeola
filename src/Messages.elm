@@ -4,5 +4,6 @@ module Messages exposing (Msg(..))
 type Msg
     = NoOp
     | SelectChord String
+    | SelectForm String
 
 
