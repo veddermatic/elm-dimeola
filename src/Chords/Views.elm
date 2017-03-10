@@ -439,6 +439,30 @@ drawDots : List Fingering -> List (Html Msg)
 drawDots stringData =
     List.map drawFingering stringData
 
+{-
+multipleChordDiagram : String -> String -> Html Msg
+multipleChordDiagram chordForm chordName =
+-}
+
+
+chordView : List Fingering -> List (Html Msg)
+chordView theChord =
+    let
+        h = toString diagram_height
+        w = toString diagram_width
+    in
+        [ Svg.rect [ 
+            fill "#efefef"
+            , stroke "#333333"
+            , strokeWidth "1"
+            , x "0", y "0"
+            , width w, height h
+            , rx "0", ry "0" 
+        ] []
+        , Svg.g [] frets
+        , Svg.g [] (drawStrings theChord)
+        , Svg.g [] (drawDots theChord)
+        ]
 
 -- Genterate a chord diagram for a given form and chord
 chordDiagram : String -> String -> Html Msg
@@ -450,14 +474,4 @@ chordDiagram chordForm chordName =
     in
         Svg.svg
           [ width w, height h, viewBox ("0 0 " ++ w ++ " " ++ h) ]
-          [
-            Svg.rect [ fill "#efefef"
-                 , stroke "#333333"
-                 , strokeWidth "1"
-                 , x "0", y "0"
-                 , width w, height h
-                 , rx "0", ry "0" ] []
-            , Svg.g [] frets
-            , Svg.g [] (drawStrings theChord)
-            , Svg.g [] (drawDots theChord)
-          ]
+          (chordView theChord) 

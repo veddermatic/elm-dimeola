@@ -5,6 +5,7 @@ import Html.Attributes exposing (..)
 import Messages exposing (Msg(..))
 
 import Chords.Views as Chords 
+import PageElements.Views as PageEls
 
 
 -- MODEL
@@ -54,15 +55,17 @@ chordInfo model =
 -- VIEW
 view: Model -> Html Msg
 view model =
-    div [ style [("display", "flex")
-                , ("justify-content", "space-around")
-                , ("font-family", "Helvetica")
-                ] 
-        ]
-        [ ul [] Chords.chordListView
-        , ul [] Chords.formListView
-        , Chords.chordDiagram model.selectedForm model.selectedChord
-        , div [] [ text (chordInfo model) ]
+    div 
+        [ class "appContainer" ]
+        [ PageEls.pageHeader 
+        , div 
+            [ class "contentPane" ] 
+            [ ul [] Chords.chordListView
+            , ul [] Chords.formListView
+            , Chords.chordDiagram model.selectedForm model.selectedChord
+            , div [] [ text (chordInfo model) ]
+            ]
+        , PageEls.pageFooter
         ]
 
 
