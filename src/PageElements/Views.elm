@@ -44,4 +44,11 @@ pageFooter =
                 [ href "http://elm-lang.org" ]
                 [ text "elm" ]
             ]
+        , p
+            [ class "appFooter__byline" ]
+            [ text "source code on "
+            , a
+                [ href "https://github.com/veddermatic/elm-dimeola" ]
+                [ text "github" ]
+            ]
         ]
