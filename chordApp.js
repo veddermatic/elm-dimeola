@@ -8648,466 +8648,975 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 		case 'Major':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						0,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(0),
-						1)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							0,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(0),
+							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'Maj7':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 2),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 3),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 3),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'Maj6':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'minor':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						0,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(0),
-						1)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							0,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(0),
+							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
-						_1: {ctor: '[]'}
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_1: {ctor: '[]'}
+						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'minor/Maj7':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						0,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(0),
-						1)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 2),
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							0,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(0),
+							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
-						_1: {ctor: '[]'}
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+							_1: {ctor: '[]'}
+						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'm7':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(_user$project$Chords_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
-					_1: {ctor: '[]'}
-				}
-			};
-		case 'm6':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(_user$project$Chords_Types$Barre, 3, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
 					_1: {
 						ctor: '::',
 						_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
 						_1: {ctor: '[]'}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm6':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 3, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'Maj6/9':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case 'Maj9':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
 						_1: {
 							ctor: '::',
 							_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
 							_1: {ctor: '[]'}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'm9':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$plainNote, 1, 1, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+					_0: A3(_user$project$Chords_Types$plainNote, 1, 1, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
-								_1: {ctor: '[]'}
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
+									_1: {ctor: '[]'}
+								}
 							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '9':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 1),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
-							_1: {
-								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			};
-		case 'o':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 3),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case '7(b9)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
-							_1: {
-								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			};
-		case '7(#9)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
 					_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 2, 5, 3, _elm_lang$core$Maybe$Nothing, 3)),
-						_1: {ctor: '[]'}
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'o':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 3),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7(b9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7(#9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 1),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Chords_Types$Barred(
+								A5(_user$project$Chords_Types$Barre, 2, 5, 3, _elm_lang$core$Maybe$Nothing, 3)),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7(b5)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case '7(#5)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 1),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 3),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'Maj7(b5)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'Maj7(#5)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 1),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 2)),
-					_1: {ctor: '[]'}
-				}
-			};
-		case 'm7(b5)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case '7sus4':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						0,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(0),
-						1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case 'm11':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 4, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case '9sus4 / 11':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						0,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(0),
-						1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 4, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case '9(+11)':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
-				_1: {
+				_0: {
 					ctor: '::',
 					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
 						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7(#5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj7(b5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj7(#5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 1),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 2)),
 						_1: {ctor: '[]'}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm7(b5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7sus4':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							0,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(0),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm11':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 4, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '9sus4 / 11':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							0,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(0),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 0, 4, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '9(+11)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '13':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 2),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '13(b9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A2(_user$project$Chords_Types$ghostNote, 0, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+								_1: {
+									ctor: '::',
+									_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '13(#9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A2(_user$project$Chords_Types$ghostNote, 0, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 0, 4, 4),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+								_1: {
+									ctor: '::',
+									_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		default:
+			return {
+				ctor: '::',
+				_0: {ctor: '[]'},
+				_1: {ctor: '[]'}
+			};
+	}
+};
+
+var _user$project$Chords_FormII$formII = function (chordName) {
+	var _p0 = chordName;
+	switch (_p0) {
+		case 'Major':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 3)),
+						_1: {ctor: '[]'}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
 							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
 							_1: {ctor: '[]'}
 						}
 					}
-				}
-			};
-		case '13(b9)':
-			return {
-				ctor: '::',
-				_0: A2(_user$project$Chords_Types$ghostNote, 0, 2),
+				},
 				_1: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+					_0: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+								_1: {
+									ctor: '::',
+									_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					},
+					_1: {ctor: '[]'}
+				}
+			};
+		case 'Maj6':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'minor':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'minor/Maj7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm6':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj6/9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 2, 3, 2, _elm_lang$core$Maybe$Nothing, 1)),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 5, 3, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 3, 4, 3, _elm_lang$core$Maybe$Nothing, 3)),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'o':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7(b9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 3),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7(#9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
 						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
@@ -9121,18 +9630,90 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
-		case '13(#9)':
+		case '7(b5)':
 			return {
 				ctor: '::',
-				_0: A2(_user$project$Chords_Types$ghostNote, 0, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 4, 4),
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							2,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 3),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7(#5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(
+							_user$project$Chords_Types$Barre,
+							1,
+							5,
+							1,
+							_elm_lang$core$Maybe$Just(1),
+							1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj7(b5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj7(#5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 1, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
 						_1: {
 							ctor: '::',
 							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
@@ -9143,538 +9724,818 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm7(b5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7sus4':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 1, 3),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm11':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 1, 3),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '9sus4 / 11':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 5, 1, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '9(+11)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 1)),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '13':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 4)),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '13(b9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Chords_Types$Barred(
+							A5(_user$project$Chords_Types$Barre, 2, 4, 1, _elm_lang$core$Maybe$Nothing, 1)),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '13(#9)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		default:
-			return {ctor: '[]'};
+			return {
+				ctor: '::',
+				_0: {ctor: '[]'},
+				_1: {ctor: '[]'}
+			};
 	}
 };
 
-var _user$project$Chords_FormII$formII = function (chordName) {
+var _user$project$Chords_FormIII$formIII = function (chordName) {
 	var _p0 = chordName;
 	switch (_p0) {
 		case 'Major':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
+				_0: {
 					ctor: '::',
 					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 3)),
-					_1: {ctor: '[]'}
-				}
+						A5(_user$project$Chords_Types$Barre, 2, 3, 4, _elm_lang$core$Maybe$Nothing, 1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'Maj7':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+					_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case '7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj6':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'minor':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 2, 3, 4, _elm_lang$core$Maybe$Nothing, 1)),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'minor/Maj7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm7':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'm6':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
 					_1: {
 						ctor: '::',
 						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 4),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+									_1: {ctor: '[]'}
+								}
+							}
 						}
 					}
-				}
-			};
-		case '7':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case 'Maj6':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'minor':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'minor/Maj7':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'm7':
-			return {
-				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case 'm6':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'Maj6/9':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 3, 2, _elm_lang$core$Maybe$Nothing, 1)),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 5, 3, 4),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			};
-		case 'Maj9':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
-						_1: {
-							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'm9':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+					_0: _user$project$Chords_Types$Barred(
+						A5(_user$project$Chords_Types$Barre, 3, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 4),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj6/9':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 6, 4),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '9':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 3, 4, 3, _elm_lang$core$Maybe$Nothing, 3)),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case 'o':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 6, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 1),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7(b9)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 3),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 5, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 1),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7(#9)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 7, 4),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 1),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'o':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 2),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 3, 7, 4),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 4, 6, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7(b5)':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						2,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+					_0: A3(_user$project$Chords_Types$plainNote, 0, 5, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 3),
-						_1: {ctor: '[]'}
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 1),
+						_1: {
+							ctor: '::',
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 3),
+								_1: {
+									ctor: '::',
+									_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7(#5)':
 			return {
 				ctor: '::',
-				_0: _user$project$Chords_Types$Barred(
-					A5(
-						_user$project$Chords_Types$Barre,
-						1,
-						5,
-						1,
-						_elm_lang$core$Maybe$Just(1),
-						1)),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+					_0: A3(_user$project$Chords_Types$plainNote, 0, 5, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
-						_1: {ctor: '[]'}
-					}
-				}
-			};
-		case 'Maj7(b5)':
-			return {
-				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
-				_1: {
-					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
-					_1: {
-						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 5, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
-							_1: {ctor: '[]'}
+							_0: _user$project$Chords_Types$Barred(
+								A5(_user$project$Chords_Types$Barre, 3, 4, 4, _elm_lang$core$Maybe$Nothing, 1)),
+							_1: {
+								ctor: '::',
+								_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'Maj7(#5)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 1, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 5, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 1),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				},
+				_1: {ctor: '[]'}
+			};
+		case 'Maj7(b5)':
+			return {
+				ctor: '::',
+				_0: {
+					ctor: '::',
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+					_1: {
+						ctor: '::',
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Chords_Types$Barred(
+								A5(_user$project$Chords_Types$Barre, 2, 3, 3, _elm_lang$core$Maybe$Nothing, 1)),
 							_1: {ctor: '[]'}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'm7(b5)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+						_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 1),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '7sus4':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 1),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 1, 3),
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 5, 2),
 								_1: {ctor: '[]'}
 							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case 'm11':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 1),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 1, 3),
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 5, 2),
 								_1: {ctor: '[]'}
 							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '9sus4 / 11':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 5, 1, 1),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 6, 2),
+							_1: {
+								ctor: '::',
+								_0: A3(_user$project$Chords_Types$plainNote, 4, 5, 1),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '9(+11)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+							_0: _user$project$Chords_Types$Barred(
+								A5(_user$project$Chords_Types$Barre, 1, 4, 6, _elm_lang$core$Maybe$Nothing, 1)),
 							_1: {ctor: '[]'}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '13':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 4)),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
-						_1: {ctor: '[]'}
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Chords_Types$Barred(
+								A5(_user$project$Chords_Types$Barre, 3, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
+							_1: {ctor: '[]'}
+						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '13(b9)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 4, 1, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 5, 2),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Chords_Types$Barred(
+									A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		case '13(#9)':
 			return {
 				ctor: '::',
-				_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
-				_1: {
+				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 4),
-							_1: {ctor: '[]'}
+							_0: A3(_user$project$Chords_Types$plainNote, 3, 7, 4),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Chords_Types$Barred(
+									A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
+								_1: {ctor: '[]'}
+							}
 						}
 					}
-				}
+				},
+				_1: {ctor: '[]'}
 			};
 		default:
-			return {ctor: '[]'};
+			return {
+				ctor: '::',
+				_0: {ctor: '[]'},
+				_1: {ctor: '[]'}
+			};
 	}
 };
 
+var _user$project$Chords_Views$chordInfo = F2(
+	function (chordForm, chordName) {
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Form ',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				chordForm,
+				A2(_elm_lang$core$Basics_ops['++'], ' : ', chordName)));
+	});
 var _user$project$Chords_Views$hasNote = F2(
 	function (string, fingering) {
 		var _p0 = fingering;
@@ -9701,275 +10562,33 @@ var _user$project$Chords_Views$chordData = F2(
 				return _user$project$Chords_FormI$formI(chordName);
 			case 'II':
 				return _user$project$Chords_FormII$formII(chordName);
+			case 'III':
+				return _user$project$Chords_FormIII$formIII(chordName);
 			default:
 				return _user$project$Chords_FormI$formI(chordName);
 		}
 	});
-var _user$project$Chords_Views$grabNodeText = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'target',
-		_1: {
-			ctor: '::',
-			_0: 'textContent',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$string);
-var _user$project$Chords_Views$onFormSelect = function (node) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Chords_Views$grabNodeText));
-};
-var _user$project$Chords_Views$formListItem = function (form) {
-	return A2(
-		_elm_lang$html$Html$li,
-		{
-			ctor: '::',
-			_0: _user$project$Chords_Views$onFormSelect(_user$project$Messages$SelectForm),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(form),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Chords_Views$onChordSelect = function (node) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Chords_Views$grabNodeText));
-};
-var _user$project$Chords_Views$chordListItem = function (chord) {
-	return A2(
-		_elm_lang$html$Html$li,
-		{
-			ctor: '::',
-			_0: _user$project$Chords_Views$onChordSelect(_user$project$Messages$SelectChord),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(chord),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Chords_Views$keys = {
-	ctor: '::',
-	_0: 'Ab',
-	_1: {
-		ctor: '::',
-		_0: 'A',
-		_1: {
-			ctor: '::',
-			_0: 'A♯',
-			_1: {
-				ctor: '::',
-				_0: 'Bb',
-				_1: {
-					ctor: '::',
-					_0: 'B',
-					_1: {
-						ctor: '::',
-						_0: 'B#',
-						_1: {
-							ctor: '::',
-							_0: 'Cb',
-							_1: {
-								ctor: '::',
-								_0: 'C',
-								_1: {
-									ctor: '::',
-									_0: 'C#',
-									_1: {
-										ctor: '::',
-										_0: 'Db',
-										_1: {
-											ctor: '::',
-											_0: 'D',
-											_1: {
-												ctor: '::',
-												_0: 'D#',
-												_1: {
-													ctor: '::',
-													_0: 'Eb',
-													_1: {
-														ctor: '::',
-														_0: 'E',
-														_1: {
-															ctor: '::',
-															_0: 'E#',
-															_1: {
-																ctor: '::',
-																_0: 'Fb',
-																_1: {
-																	ctor: '::',
-																	_0: 'F',
-																	_1: {
-																		ctor: '::',
-																		_0: 'F#',
-																		_1: {
-																			ctor: '::',
-																			_0: 'Gb',
-																			_1: {
-																				ctor: '::',
-																				_0: 'G',
-																				_1: {
-																					ctor: '::',
-																					_0: 'G#',
-																					_1: {ctor: '[]'}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _user$project$Chords_Views$chordForms = {
-	ctor: '::',
-	_0: 'I',
-	_1: {
-		ctor: '::',
-		_0: 'II',
-		_1: {ctor: '[]'}
-	}
-};
-var _user$project$Chords_Views$formListView = A2(_elm_lang$core$List$map, _user$project$Chords_Views$formListItem, _user$project$Chords_Views$chordForms);
-var _user$project$Chords_Views$chordList = {
-	ctor: '::',
-	_0: 'Major',
-	_1: {
-		ctor: '::',
-		_0: 'Maj7',
-		_1: {
-			ctor: '::',
-			_0: '7',
-			_1: {
-				ctor: '::',
-				_0: 'Maj6',
-				_1: {
-					ctor: '::',
-					_0: 'minor',
-					_1: {
-						ctor: '::',
-						_0: 'minor/Maj7',
-						_1: {
-							ctor: '::',
-							_0: 'm7',
-							_1: {
-								ctor: '::',
-								_0: 'm6',
-								_1: {
-									ctor: '::',
-									_0: 'Maj9',
-									_1: {
-										ctor: '::',
-										_0: 'Maj6/9',
-										_1: {
-											ctor: '::',
-											_0: 'm9',
-											_1: {
-												ctor: '::',
-												_0: '9',
-												_1: {
-													ctor: '::',
-													_0: 'o',
-													_1: {
-														ctor: '::',
-														_0: '7(b9)',
-														_1: {
-															ctor: '::',
-															_0: '7(#9)',
-															_1: {
-																ctor: '::',
-																_0: '7(b5)',
-																_1: {
-																	ctor: '::',
-																	_0: '7(#5)',
-																	_1: {
-																		ctor: '::',
-																		_0: 'Maj7(b5)',
-																		_1: {
-																			ctor: '::',
-																			_0: 'Maj7(#5)',
-																			_1: {
-																				ctor: '::',
-																				_0: 'm7(b5)',
-																				_1: {
-																					ctor: '::',
-																					_0: '7sus4',
-																					_1: {
-																						ctor: '::',
-																						_0: 'm11',
-																						_1: {
-																							ctor: '::',
-																							_0: '9sus4 / 11',
-																							_1: {
-																								ctor: '::',
-																								_0: '9(+11)',
-																								_1: {
-																									ctor: '::',
-																									_0: '13',
-																									_1: {
-																										ctor: '::',
-																										_0: '13(b9)',
-																										_1: {
-																											ctor: '::',
-																											_0: '13(#9)',
-																											_1: {ctor: '[]'}
-																										}
-																									}
-																								}
-																							}
-																						}
-																					}
-																				}
-																			}
-																		}
-																	}
-																}
-															}
-														}
-													}
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _user$project$Chords_Views$chordListView = A2(_elm_lang$core$List$map, _user$project$Chords_Views$chordListItem, _user$project$Chords_Views$chordList);
-var _user$project$Chords_Views$rootColor = '#7565b7';
+var _user$project$Chords_Views$blackColor = '#333333';
+var _user$project$Chords_Views$rootColor = '#259577';
 var _user$project$Chords_Views$muteColor = '#d5939b';
+var _user$project$Chords_Views$string_stroke = '2';
+var _user$project$Chords_Views$fret_stroke = '4';
+var _user$project$Chords_Views$num_strings = 6;
+var _user$project$Chords_Views$num_frets = 7;
+var _user$project$Chords_Views$string_space = 32;
+var _user$project$Chords_Views$fret_length = (_user$project$Chords_Views$num_strings - 1) * _user$project$Chords_Views$string_space;
+var _user$project$Chords_Views$fret_length_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$fret_length);
+var _user$project$Chords_Views$fret_space = 45;
+var _user$project$Chords_Views$string_length = _user$project$Chords_Views$num_frets * _user$project$Chords_Views$fret_space;
+var _user$project$Chords_Views$string_length_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$string_length);
+var _user$project$Chords_Views$fretY = function (fret) {
+	return _elm_lang$core$Basics$toString(fret * _user$project$Chords_Views$fret_space);
+};
+var _user$project$Chords_Views$barreRootY = function (fret) {
+	return _elm_lang$core$Basics$toString((fret * _user$project$Chords_Views$fret_space) - 5);
+};
 var _user$project$Chords_Views$diagram_inset = 20;
 var _user$project$Chords_Views$diagram_inset_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_inset);
-var _user$project$Chords_Views$num_frets = 4;
-var _user$project$Chords_Views$diagram_width = 200;
-var _user$project$Chords_Views$fret_length = _user$project$Chords_Views$diagram_width - (_user$project$Chords_Views$diagram_inset * 2);
-var _user$project$Chords_Views$fret_length_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$fret_length);
 var _user$project$Chords_Views$fret = function (ypos) {
 	return A2(
 		_elm_lang$svg$Svg$path,
@@ -9991,149 +10610,18 @@ var _user$project$Chords_Views$fret = function (ypos) {
 								A2(_elm_lang$core$Basics_ops['++'], ' h ', _user$project$Chords_Views$fret_length_)))))),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$stroke('#333333'),
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Chords_Views$blackColor),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$strokeWidth('2'),
+					_0: _elm_lang$svg$Svg_Attributes$strokeWidth(_user$project$Chords_Views$fret_stroke),
 					_1: {ctor: '[]'}
 				}
 			}
 		},
 		{ctor: '[]'});
 };
-var _user$project$Chords_Views$string_space = (_user$project$Chords_Views$fret_length / 5) | 0;
-var _user$project$Chords_Views$stringX = function (index) {
-	return _elm_lang$core$Basics$toString((index * _user$project$Chords_Views$string_space) + _user$project$Chords_Views$diagram_inset);
-};
-var _user$project$Chords_Views$muteX = F2(
-	function (stringNum, gotNotes) {
-		var xcoord = _user$project$Chords_Views$stringX(stringNum);
-		var _p3 = gotNotes;
-		if (_p3 === true) {
-			return _elm_lang$html$Html$text('');
-		} else {
-			return A2(
-				_elm_lang$svg$Svg$text_,
-				{
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$x(xcoord),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$y(
-							_elm_lang$core$Basics$toString((_user$project$Chords_Views$diagram_inset / 2) | 0)),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$dy(
-								_elm_lang$core$Basics$toString((_user$project$Chords_Views$diagram_inset / 4) | 0)),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$fontSize('20'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$muteColor),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('x'),
-					_1: {ctor: '[]'}
-				});
-		}
-	});
-var _user$project$Chords_Views$barreX = function (startString) {
-	return _elm_lang$core$Basics$toString((startString * _user$project$Chords_Views$string_space) + ((_user$project$Chords_Views$diagram_inset / 2) | 0));
-};
-var _user$project$Chords_Views$barreWidth = function (barre) {
-	return ((barre.endString - barre.startString) * _user$project$Chords_Views$string_space) + _user$project$Chords_Views$diagram_inset;
-};
-var _user$project$Chords_Views$diagram_height = 240;
-var _user$project$Chords_Views$string_length = _user$project$Chords_Views$diagram_height - (_user$project$Chords_Views$diagram_inset * 2);
-var _user$project$Chords_Views$string_length_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$string_length);
-var _user$project$Chords_Views$renderString = F2(
-	function (stringData, index) {
-		var notes = A2(_user$project$Chords_Views$hasNotes, index, stringData);
-		var strokeColor = notes ? '#333333' : _user$project$Chords_Views$muteColor;
-		return A2(
-			_elm_lang$svg$Svg$g,
-			{ctor: '[]'},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$svg$Svg$path,
-					{
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$d(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'M',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_user$project$Chords_Views$stringX(index),
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										' ',
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											_user$project$Chords_Views$diagram_inset_,
-											A2(_elm_lang$core$Basics_ops['++'], ' v ', _user$project$Chords_Views$string_length_)))))),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$stroke(strokeColor),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$strokeWidth('2'),
-								_1: {ctor: '[]'}
-							}
-						}
-					},
-					{ctor: '[]'}),
-				_1: {
-					ctor: '::',
-					_0: A2(_user$project$Chords_Views$muteX, index, notes),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
-var _user$project$Chords_Views$drawStrings = function (stringData) {
-	var render = _user$project$Chords_Views$renderString(stringData);
-	return A2(
-		_elm_lang$core$List$map,
-		render,
-		{
-			ctor: '::',
-			_0: 0,
-			_1: {
-				ctor: '::',
-				_0: 1,
-				_1: {
-					ctor: '::',
-					_0: 2,
-					_1: {
-						ctor: '::',
-						_0: 3,
-						_1: {
-							ctor: '::',
-							_0: 4,
-							_1: {
-								ctor: '::',
-								_0: 5,
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		});
-};
-var _user$project$Chords_Views$fret_space = (_user$project$Chords_Views$string_length / _user$project$Chords_Views$num_frets) | 0;
+var _user$project$Chords_Views$diagram_height = (_user$project$Chords_Views$num_frets * _user$project$Chords_Views$fret_space) + (_user$project$Chords_Views$diagram_inset * 2);
+var _user$project$Chords_Views$diagram_width = ((_user$project$Chords_Views$num_strings - 1) * _user$project$Chords_Views$string_space) + (_user$project$Chords_Views$diagram_inset * 2);
 var _user$project$Chords_Views$fretYs = A2(
 	_elm_lang$core$List$map,
 	function (s) {
@@ -10144,39 +10632,15 @@ var _user$project$Chords_Views$fretYs = A2(
 		function (f) {
 			return f * _user$project$Chords_Views$fret_space;
 		},
-		{
-			ctor: '::',
-			_0: 0,
-			_1: {
-				ctor: '::',
-				_0: 1,
-				_1: {
-					ctor: '::',
-					_0: 2,
-					_1: {
-						ctor: '::',
-						_0: 3,
-						_1: {
-							ctor: '::',
-							_0: 4,
-							_1: {
-								ctor: '::',
-								_0: 5,
-								_1: {ctor: '[]'}
-							}
-						}
-					}
-				}
-			}
-		}));
+		A2(_elm_lang$core$List$range, 0, _user$project$Chords_Views$num_frets)));
 var _user$project$Chords_Views$frets = A2(_elm_lang$core$List$map, _user$project$Chords_Views$fret, _user$project$Chords_Views$fretYs);
-var _user$project$Chords_Views$fretY = function (fret) {
-	return _elm_lang$core$Basics$toString(fret * _user$project$Chords_Views$fret_space);
+var _user$project$Chords_Views$stringX = function (index) {
+	return _elm_lang$core$Basics$toString((index * _user$project$Chords_Views$string_space) + _user$project$Chords_Views$diagram_inset);
 };
 var _user$project$Chords_Views$dot = function (note) {
 	var ycoord = _user$project$Chords_Views$fretY(note.fret);
 	var xcoord = _user$project$Chords_Views$stringX(note.string);
-	var fillColor = note.rootNote ? '#7565b7' : '#333333';
+	var fillColor = note.rootNote ? _user$project$Chords_Views$rootColor : _user$project$Chords_Views$blackColor;
 	return A2(
 		_elm_lang$svg$Svg$g,
 		{ctor: '[]'},
@@ -10273,16 +10737,16 @@ var _user$project$Chords_Views$ghostDot = function (note) {
 		},
 		{ctor: '[]'});
 };
-var _user$project$Chords_Views$barreRootY = function (fret) {
-	return _elm_lang$core$Basics$toString((fret * _user$project$Chords_Views$fret_space) - 5);
+var _user$project$Chords_Views$barreX = function (startString) {
+	return _elm_lang$core$Basics$toString((startString * _user$project$Chords_Views$string_space) + ((_user$project$Chords_Views$diagram_inset / 2) | 0));
 };
 var _user$project$Chords_Views$barreRootSquare = F2(
 	function (string, fret) {
-		var _p4 = string;
-		if (_p4.ctor === 'Nothing') {
+		var _p3 = string;
+		if (_p3.ctor === 'Nothing') {
 			return _elm_lang$html$Html$text('');
 		} else {
-			var xcoord = _user$project$Chords_Views$barreX(_p4._0);
+			var xcoord = _user$project$Chords_Views$barreX(_p3._0);
 			var ycoord = _user$project$Chords_Views$barreRootY(fret);
 			return A2(
 				_elm_lang$svg$Svg$rect,
@@ -10294,7 +10758,7 @@ var _user$project$Chords_Views$barreRootSquare = F2(
 						_0: _elm_lang$svg$Svg_Attributes$strokeWidth('6'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$stroke('#333333'),
+							_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Chords_Views$blackColor),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$y(ycoord),
@@ -10318,6 +10782,9 @@ var _user$project$Chords_Views$barreRootSquare = F2(
 				{ctor: '[]'});
 		}
 	});
+var _user$project$Chords_Views$barreWidth = function (barre) {
+	return ((barre.endString - barre.startString) * _user$project$Chords_Views$string_space) + _user$project$Chords_Views$diagram_inset;
+};
 var _user$project$Chords_Views$barreBlock = function (barre) {
 	var h = '10';
 	var w_ = _user$project$Chords_Views$barreWidth(barre);
@@ -10334,7 +10801,7 @@ var _user$project$Chords_Views$barreBlock = function (barre) {
 				_elm_lang$svg$Svg$rect,
 				{
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$fill('#333333'),
+					_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$blackColor),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$x(xcoord),
@@ -10386,7 +10853,7 @@ var _user$project$Chords_Views$barreBlock = function (barre) {
 											_0: _elm_lang$svg$Svg_Attributes$textAnchor('left'),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$svg$Svg_Attributes$fill('#333'),
+												_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$blackColor),
 												_1: {ctor: '[]'}
 											}
 										}
@@ -10410,45 +10877,129 @@ var _user$project$Chords_Views$barreBlock = function (barre) {
 		});
 };
 var _user$project$Chords_Views$drawFingering = function (fingering) {
-	var _p5 = fingering;
-	switch (_p5.ctor) {
+	var _p4 = fingering;
+	switch (_p4.ctor) {
 		case 'Single':
-			return _user$project$Chords_Views$dot(_p5._0);
+			return _user$project$Chords_Views$dot(_p4._0);
 		case 'Barred':
-			return _user$project$Chords_Views$barreBlock(_p5._0);
+			return _user$project$Chords_Views$barreBlock(_p4._0);
 		default:
-			return _user$project$Chords_Views$ghostDot(_p5._0);
+			return _user$project$Chords_Views$ghostDot(_p4._0);
 	}
 };
 var _user$project$Chords_Views$drawDots = function (stringData) {
 	return A2(_elm_lang$core$List$map, _user$project$Chords_Views$drawFingering, stringData);
 };
-var _user$project$Chords_Views$chordDiagram = F2(
-	function (chordForm, chordName) {
-		var theChord = A2(_user$project$Chords_Views$chordData, chordForm, chordName);
+var _user$project$Chords_Views$muteX = F2(
+	function (stringNum, gotNotes) {
+		var xcoord = _user$project$Chords_Views$stringX(stringNum);
+		var _p5 = gotNotes;
+		if (_p5 === true) {
+			return _elm_lang$html$Html$text('');
+		} else {
+			return A2(
+				_elm_lang$svg$Svg$text_,
+				{
+					ctor: '::',
+					_0: _elm_lang$svg$Svg_Attributes$x(xcoord),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$y(
+							_elm_lang$core$Basics$toString((_user$project$Chords_Views$diagram_inset / 2) | 0)),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$dy(
+								_elm_lang$core$Basics$toString((_user$project$Chords_Views$diagram_inset / 4) | 0)),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$fontSize('20'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$muteColor),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('x'),
+					_1: {ctor: '[]'}
+				});
+		}
+	});
+var _user$project$Chords_Views$renderString = F2(
+	function (stringData, index) {
+		var notes = A2(_user$project$Chords_Views$hasNotes, index, stringData);
+		var strokeColor = notes ? _user$project$Chords_Views$blackColor : _user$project$Chords_Views$muteColor;
+		return A2(
+			_elm_lang$svg$Svg$g,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$svg$Svg$path,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$d(
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'M',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_user$project$Chords_Views$stringX(index),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										' ',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											_user$project$Chords_Views$diagram_inset_,
+											A2(_elm_lang$core$Basics_ops['++'], ' v ', _user$project$Chords_Views$string_length_)))))),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$stroke(strokeColor),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$strokeWidth(_user$project$Chords_Views$string_stroke),
+								_1: {ctor: '[]'}
+							}
+						}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(_user$project$Chords_Views$muteX, index, notes),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Chords_Views$drawStrings = function (stringData) {
+	var render = _user$project$Chords_Views$renderString(stringData);
+	return A2(
+		_elm_lang$core$List$map,
+		render,
+		A2(_elm_lang$core$List$range, 0, _user$project$Chords_Views$num_strings - 1));
+};
+var _user$project$Chords_Views$chordView = F2(
+	function (index, theChord) {
+		var xcoord = _elm_lang$core$Basics$toString((10 + _user$project$Chords_Views$diagram_width) * index);
 		var w = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_width);
 		var h = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_height);
 		return A2(
-			_elm_lang$svg$Svg$svg,
+			_elm_lang$svg$Svg$g,
 			{
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$width(w),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$height(h),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$viewBox(
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'0 0 ',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									w,
-									A2(_elm_lang$core$Basics_ops['++'], ' ', h)))),
-						_1: {ctor: '[]'}
-					}
-				}
+				_0: _elm_lang$svg$Svg_Attributes$transform(
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'translate(',
+						A2(_elm_lang$core$Basics_ops['++'], xcoord, ', 0)'))),
+				_1: {ctor: '[]'}
 			},
 			{
 				ctor: '::',
@@ -10456,34 +11007,26 @@ var _user$project$Chords_Views$chordDiagram = F2(
 					_elm_lang$svg$Svg$rect,
 					{
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$fill('#efefef'),
+						_0: _elm_lang$svg$Svg_Attributes$fill('#ffffff'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$stroke('#333333'),
+							_0: _elm_lang$svg$Svg_Attributes$x('0'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$strokeWidth('1'),
+								_0: _elm_lang$svg$Svg_Attributes$y('0'),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$x('0'),
+									_0: _elm_lang$svg$Svg_Attributes$width(w),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$y('0'),
+										_0: _elm_lang$svg$Svg_Attributes$height(h),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$svg$Svg_Attributes$width(w),
+											_0: _elm_lang$svg$Svg_Attributes$rx('0'),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$svg$Svg_Attributes$height(h),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$svg$Svg_Attributes$rx('0'),
-													_1: {
-														ctor: '::',
-														_0: _elm_lang$svg$Svg_Attributes$ry('0'),
-														_1: {ctor: '[]'}
-													}
-												}
+												_0: _elm_lang$svg$Svg_Attributes$ry('0'),
+												_1: {ctor: '[]'}
 											}
 										}
 									}
@@ -10516,68 +11059,583 @@ var _user$project$Chords_Views$chordDiagram = F2(
 				}
 			});
 	});
+var _user$project$Chords_Views$chordDiagram = F2(
+	function (chordForm, chordName) {
+		var h = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_height);
+		var theChords = A2(_user$project$Chords_Views$chordData, chordForm, chordName);
+		var w = _elm_lang$core$Basics$toString(
+			(_user$project$Chords_Views$diagram_width + 10) * _elm_lang$core$List$length(theChords));
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$svg$Svg_Attributes$class('chordViewPane'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h1,
+					{
+						ctor: '::',
+						_0: _elm_lang$svg$Svg_Attributes$class('currentChord__title contentTitle'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							A2(_user$project$Chords_Views$chordInfo, chordForm, chordName)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$svg$Svg$svg,
+						{
+							ctor: '::',
+							_0: _elm_lang$svg$Svg_Attributes$width(w),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$svg$Svg_Attributes$height(h),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$svg$Svg_Attributes$viewBox(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'0 0 ',
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												w,
+												A2(_elm_lang$core$Basics_ops['++'], ' ', h)))),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						A2(_elm_lang$core$List$indexedMap, _user$project$Chords_Views$chordView, theChords)),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+
+var _user$project$Pickers_Views$grabNodeText = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'textContent',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _user$project$Pickers_Views$onFormSelect = function (node) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Pickers_Views$grabNodeText));
+};
+var _user$project$Pickers_Views$formListItem = F2(
+	function (selectedForm, form) {
+		return A2(
+			_elm_lang$html$Html$li,
+			{
+				ctor: '::',
+				_0: _user$project$Pickers_Views$onFormSelect(_user$project$Messages$SelectForm),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'formList__item', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'formList__item--selected',
+									_1: _elm_lang$core$Native_Utils.eq(selectedForm, form)
+								},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(form),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Pickers_Views$onChordSelect = function (node) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Pickers_Views$grabNodeText));
+};
+var _user$project$Pickers_Views$chordListItem = F2(
+	function (selectedChord, chord) {
+		return A2(
+			_elm_lang$html$Html$li,
+			{
+				ctor: '::',
+				_0: _user$project$Pickers_Views$onChordSelect(_user$project$Messages$SelectChord),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'chordList__item', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'chordList__item--selected',
+									_1: _elm_lang$core$Native_Utils.eq(selectedChord, chord)
+								},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(chord),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Pickers_Views$keys = {
+	ctor: '::',
+	_0: 'Ab',
+	_1: {
+		ctor: '::',
+		_0: 'A',
+		_1: {
+			ctor: '::',
+			_0: 'A♯',
+			_1: {
+				ctor: '::',
+				_0: 'Bb',
+				_1: {
+					ctor: '::',
+					_0: 'B',
+					_1: {
+						ctor: '::',
+						_0: 'B#',
+						_1: {
+							ctor: '::',
+							_0: 'Cb',
+							_1: {
+								ctor: '::',
+								_0: 'C',
+								_1: {
+									ctor: '::',
+									_0: 'C#',
+									_1: {
+										ctor: '::',
+										_0: 'Db',
+										_1: {
+											ctor: '::',
+											_0: 'D',
+											_1: {
+												ctor: '::',
+												_0: 'D#',
+												_1: {
+													ctor: '::',
+													_0: 'Eb',
+													_1: {
+														ctor: '::',
+														_0: 'E',
+														_1: {
+															ctor: '::',
+															_0: 'E#',
+															_1: {
+																ctor: '::',
+																_0: 'Fb',
+																_1: {
+																	ctor: '::',
+																	_0: 'F',
+																	_1: {
+																		ctor: '::',
+																		_0: 'F#',
+																		_1: {
+																			ctor: '::',
+																			_0: 'Gb',
+																			_1: {
+																				ctor: '::',
+																				_0: 'G',
+																				_1: {
+																					ctor: '::',
+																					_0: 'G#',
+																					_1: {ctor: '[]'}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Pickers_Views$chordForms = {
+	ctor: '::',
+	_0: 'I',
+	_1: {
+		ctor: '::',
+		_0: 'II',
+		_1: {
+			ctor: '::',
+			_0: 'III',
+			_1: {ctor: '[]'}
+		}
+	}
+};
+var _user$project$Pickers_Views$formListView = function (selectedForm) {
+	var itemMapper = _user$project$Pickers_Views$formListItem(selectedForm);
+	var items = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Views$chordForms);
+	return A2(
+		_elm_lang$html$Html$section,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('formList'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('formList__header contentTitle'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Form'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$ul,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('formList__list'),
+						_1: {ctor: '[]'}
+					},
+					items),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Pickers_Views$chordNames = {
+	ctor: '::',
+	_0: 'Major',
+	_1: {
+		ctor: '::',
+		_0: 'Maj7',
+		_1: {
+			ctor: '::',
+			_0: '7',
+			_1: {
+				ctor: '::',
+				_0: 'Maj6',
+				_1: {
+					ctor: '::',
+					_0: 'minor',
+					_1: {
+						ctor: '::',
+						_0: 'minor/Maj7',
+						_1: {
+							ctor: '::',
+							_0: 'm7',
+							_1: {
+								ctor: '::',
+								_0: 'm6',
+								_1: {
+									ctor: '::',
+									_0: 'Maj9',
+									_1: {
+										ctor: '::',
+										_0: 'm9',
+										_1: {
+											ctor: '::',
+											_0: 'Maj6/9',
+											_1: {
+												ctor: '::',
+												_0: '9',
+												_1: {
+													ctor: '::',
+													_0: '7(b9)',
+													_1: {
+														ctor: '::',
+														_0: '7(#9)',
+														_1: {
+															ctor: '::',
+															_0: 'o',
+															_1: {
+																ctor: '::',
+																_0: '7(b5)',
+																_1: {
+																	ctor: '::',
+																	_0: '7(#5)',
+																	_1: {
+																		ctor: '::',
+																		_0: 'Maj7(#5)',
+																		_1: {
+																			ctor: '::',
+																			_0: 'Maj7(b5)',
+																			_1: {
+																				ctor: '::',
+																				_0: 'm7(b5)',
+																				_1: {
+																					ctor: '::',
+																					_0: '7sus4',
+																					_1: {
+																						ctor: '::',
+																						_0: 'm11',
+																						_1: {
+																							ctor: '::',
+																							_0: '9sus4 / 11',
+																							_1: {
+																								ctor: '::',
+																								_0: '9(+11)',
+																								_1: {
+																									ctor: '::',
+																									_0: '13',
+																									_1: {
+																										ctor: '::',
+																										_0: '13(b9)',
+																										_1: {
+																											ctor: '::',
+																											_0: '13(#9)',
+																											_1: {ctor: '[]'}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Pickers_Views$chordListView = function (selectedChord) {
+	var itemMapper = _user$project$Pickers_Views$chordListItem(selectedChord);
+	var chords = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Views$chordNames);
+	return A2(
+		_elm_lang$html$Html$section,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('chordList'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('chordList__header contentTitle'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Chord'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$ul,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('chordList__list'),
+						_1: {ctor: '[]'}
+					},
+					chords),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Pickers_Views$pickerViews = F2(
+	function (selectedForm, selectedChord) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('pickerViews'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _user$project$Pickers_Views$chordListView(selectedChord),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Pickers_Views$formListView(selectedForm),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+
+var _user$project$PageElements_Views$pageFooter = A2(
+	_elm_lang$html$Html$footer,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('appFooter outerContainer'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$p,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('appFooter__byline'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('created by '),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$a,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$href('http://eskimospy.com'),
+							_1: {ctor: '[]'}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Dave Vedder'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('appFooter__byline'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('made with '),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$a,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$href('http://elm-lang.org'),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('elm'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$PageElements_Views$pageHeader = A2(
+	_elm_lang$html$Html$header,
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html_Attributes$class('appHeader outerContainer'),
+		_1: {ctor: '[]'}
+	},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$h1,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('appHeader__title'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Al Di Meola Chord Study Helper'),
+				_1: {ctor: '[]'}
+			}),
+		_1: {ctor: '[]'}
+	});
 
 var _user$project$ChordBook$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$none;
-};
-var _user$project$ChordBook$chordInfo = function (model) {
-	return A2(
-		_elm_lang$core$Basics_ops['++'],
-		'Form ',
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			model.selectedForm,
-			A2(_elm_lang$core$Basics_ops['++'], ' : ', model.selectedChord)));
 };
 var _user$project$ChordBook$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$style(
-				{
-					ctor: '::',
-					_0: {ctor: '_Tuple2', _0: 'display', _1: 'flex'},
-					_1: {
-						ctor: '::',
-						_0: {ctor: '_Tuple2', _0: 'justify-content', _1: 'space-around'},
-						_1: {
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'font-family', _1: 'Helvetica'},
-							_1: {ctor: '[]'}
-						}
-					}
-				}),
+			_0: _elm_lang$html$Html_Attributes$class('appContainer'),
 			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$ul,
-				{ctor: '[]'},
-				_user$project$Chords_Views$chordListView),
+			_0: _user$project$PageElements_Views$pageHeader,
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$ul,
-					{ctor: '[]'},
-					_user$project$Chords_Views$formListView),
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('contentPane'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(_user$project$Pickers_Views$pickerViews, model.selectedForm, model.selectedChord),
+						_1: {
+							ctor: '::',
+							_0: A2(_user$project$Chords_Views$chordDiagram, model.selectedForm, model.selectedChord),
+							_1: {ctor: '[]'}
+						}
+					}),
 				_1: {
 					ctor: '::',
-					_0: A2(_user$project$Chords_Views$chordDiagram, model.selectedForm, model.selectedChord),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$div,
-							{ctor: '[]'},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_user$project$ChordBook$chordInfo(model)),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
+					_0: _user$project$PageElements_Views$pageFooter,
+					_1: {ctor: '[]'}
 				}
 			}
 		});

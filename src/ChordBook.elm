@@ -1,25 +1,29 @@
 module ChordBook exposing (..)
 
-import Html exposing (Html, text, li, ul, div, program)
+import Html exposing (Html, text, div, program, h1)
 import Html.Attributes exposing (..)
 import Messages exposing (Msg(..))
-
-import Chords.Views as Chords 
+import Chords.Views as Chords
+import Pickers.Views as Pickers
 import PageElements.Views as PageEls
 
 
 -- MODEL
 
+
 type alias Model =
-    { selectedChord: String
-    , selectedForm: String
-    , selectedKey: String
+    { selectedChord : String
+    , selectedForm : String
+    , selectedKey : String
     }
 
 
+
 -- outputs the default model for our init function
+
+
 initialModel : Model
-initialModel = 
+initialModel =
     { selectedChord = "Major"
     , selectedForm = "II"
     , selectedKey = "G"
@@ -27,15 +31,15 @@ initialModel =
 
 
 init : ( Model, Cmd Msg )
-init = 
+init =
     ( initialModel, Cmd.none )
-
 
 
 
 -- UPDATE
 
-update: Msg -> Model -> ( Model, Cmd Msg )
+
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NoOp ->
@@ -48,38 +52,41 @@ update msg model =
             ( { model | selectedForm = form }, Cmd.none )
 
 
-chordInfo : Model -> String
-chordInfo model =
-    "Form " ++ model.selectedForm ++ " : " ++ model.selectedChord
 
 -- VIEW
-view: Model -> Html Msg
+
+
+view : Model -> Html Msg
 view model =
-    div 
+    div
         [ class "appContainer" ]
-        [ PageEls.pageHeader 
-        , div 
-            [ class "contentPane" ] 
-            [ ul [] Chords.chordListView
-            , ul [] Chords.formListView
+        [ PageEls.pageHeader
+        , div
+            [ class "contentPane" ]
+            [ Pickers.pickerViews model.selectedForm model.selectedChord
             , Chords.chordDiagram model.selectedForm model.selectedChord
-            , div [] [ text (chordInfo model) ]
             ]
         , PageEls.pageFooter
         ]
 
 
+
 -- SUBSCRIPTIONS
-subscriptions: Model -> Sub Msg
+
+
+subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
 
 
+
 -- MAIN
+
+
 main =
     program
-    { init = init
-    , view = view
-    , update = update
-    , subscriptions = subscriptions
-    }
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
