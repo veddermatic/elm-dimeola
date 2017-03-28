@@ -14,7 +14,9 @@ update msg model =
         BrowserMsg msg ->
             ( model, Cmd.none )
 
-        -- make it: ({model | browse = ..update model.browse}, Cmd.none)
+        FlashcardsMsg msg ->
+            ( model, Cmd.none )
+
 {-
     CHECK THIS PATTERN OUT THOUGH:
 
