@@ -1,4 +1,4 @@
-module ChordFlashCards.View exposing (rootView)
+module ChordFlashcards.View exposing (rootView)
 
 import Html exposing (Html, div)
 import Html.Attributes exposing (..)

@@ -9,13 +9,12 @@ import ChordDiagrams.View exposing (chordDiagram)
 import ChordBrowser.Model exposing (..)
 import ChordBrowser.Messages exposing (..)
 
+import Pickers.Views exposing (pickerViews)
+
 rootView : Model -> Html Msg
 rootView model =
     div
         [ class "contentPane" ]
-        [ chordDiagram model.selectedForm model.selectedChord ]
-{-
-        [ Pickers.pickerViews model.selectedForm model.selectedChord
-        , chordDiagram model.selectedForm model.selectedChord
+        [ pickerViews (SelectChord, SelectForm)  model.selectedForm model.selectedChord
+        , chordDiagram model.selectedForm model.selectedChord 
         ]
--}

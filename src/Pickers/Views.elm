@@ -3,7 +3,6 @@ module Pickers.Views exposing (..)
 import Html exposing (Html, text, li, ul, section, h1, div)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on)
-import Messages exposing (Msg(..))
 import Json.Decode as Json
 
 
@@ -100,6 +99,7 @@ keys =
 -- ##################
 -- custom event handler for clicking that calls a special function to get
 -- at the node text
+-- onChordSelect : (String -> msg) -> Html.Attribute msg
 
 
 onChordSelect : (String -> msg) -> Html.Attribute msg
@@ -122,20 +122,20 @@ grabNodeText =
 -- I can get the text from the node
 
 
-chordListItem : String -> String -> Html Msg
-chordListItem selectedChord chord =
+chordListItem : (String -> msg) -> String -> String -> Html msg
+chordListItem msg selectedChord chord =
     li
-        [ onChordSelect SelectChord
+        [ onChordSelect msg
         , classList [ ( "chordList__item", True ), ( "chordList__item--selected", (selectedChord == chord) ) ]
         ]
         [ text chord ]
 
 
-chordListView : String -> Html Msg
-chordListView selectedChord =
+chordListView : (String -> msg) -> String -> Html msg
+chordListView msg selectedChord =
     let
         itemMapper =
-            chordListItem selectedChord
+            chordListItem msg selectedChord
 
         chords =
             List.map itemMapper chordNames
@@ -155,10 +155,10 @@ chordListView selectedChord =
 -- Display of a single Form Name
 
 
-formListItem : String -> String -> Html Msg
-formListItem selectedForm form =
+formListItem : (String -> msg) -> String -> String -> Html msg
+formListItem msg selectedForm form =
     li
-        [ onFormSelect SelectForm
+        [ onFormSelect msg
         , classList [ ( "formList__item", True ), ( "formList__item--selected", (selectedForm == form) ) ]
         ]
         [ text form ]
@@ -178,11 +178,11 @@ onFormSelect node =
 -- List of all the Forms
 
 
-formListView : String -> Html Msg
-formListView selectedForm =
+formListView : (String -> msg) -> String -> Html msg
+formListView msg selectedForm =
     let
         itemMapper =
-            formListItem selectedForm
+            formListItem msg selectedForm
 
         items =
             List.map itemMapper chordForms
@@ -198,14 +198,14 @@ formListView selectedForm =
             ]
 
 
-
--- The picker views wrapped up in A Thing
-
-
-pickerViews : String -> String -> Html Msg
-pickerViews selectedForm selectedChord =
-    div
-        [ class "pickerViews" ]
-        [ chordListView selectedChord
-        , formListView selectedForm
-        ]
+pickerViews : ( String -> msg, String -> msg ) -> String -> String -> Html msg
+pickerViews msgs selectedForm selectedChord =
+    let
+        ( chordMsg, formMsg ) =
+            msgs
+    in
+        div
+            [ class "pickerViews" ]
+            [ chordListView chordMsg selectedChord
+            , formListView formMsg selectedForm
+            ]

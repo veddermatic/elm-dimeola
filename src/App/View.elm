@@ -7,6 +7,7 @@ import App.Model exposing (Model)
 import App.Messages exposing (..)
 
 import ChordBrowser.View
+import ChordFlashcards.View
 
 
 rootView : Model -> Html Msg
@@ -14,6 +15,7 @@ rootView model =
     div [ class "appContainer" ]
         [ pageHeader
         , Html.map BrowserMsg (ChordBrowser.View.rootView model.browser) -- HOLY CRAPi!  Wraps Msg w/o kid knowing nothing about it!
+        , Html.map FlashcardsMsg (ChordFlashcards.View.rootView model.flashcards) -- HOLY CRAPi!  Wraps Msg w/o kid knowing nothing about it!
         , pageFooter
         ]
 
