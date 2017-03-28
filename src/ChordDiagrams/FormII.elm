@@ -1,6 +1,6 @@
-module Chords.FormII exposing (formII)
+module ChordDiagrams.FormII exposing (formII)
 
-import Chords.Types exposing (..)
+import ChordDiagrams.Types exposing (..)
 
 
 -- all the data for Form II chords
@@ -23,7 +23,6 @@ formII chordName =
               ]
             ]
 
-        -- TODO: handle the two forms!
         "7" ->
             [ [ Barred (Barre 1 5 2 (Just 1) 1)
               , (plainNote 2 4 3)

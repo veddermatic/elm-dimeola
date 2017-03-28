@@ -1,6 +1,6 @@
-module Chords.FormI exposing (formI)
+module ChordDiagrams.FormI exposing (formI)
 
-import Chords.Types exposing (..)
+import ChordDiagrams.Types exposing (..)
 
 
 -- all the data for Form I chords

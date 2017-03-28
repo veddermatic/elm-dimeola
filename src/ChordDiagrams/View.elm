@@ -1,44 +1,44 @@
-module Chords.Views exposing (..)
+module ChordDiagrams.View exposing (chordDiagram)
 
 -- external imports
 
 import Html exposing (Html, text, li, ul, h1, div)
-import Messages exposing (Msg(..))
 import Svg
 import Svg.Attributes exposing (..)
 
 
 -- my imports
 
-import Chords.FormI exposing (formI)
-import Chords.FormII exposing (formII)
-import Chords.FormIII exposing (formIII)
-import Chords.Types exposing (Note, Barre, Fingering(..))
+import ChordDiagrams.FormI exposing (formI)
+import ChordDiagrams.FormII exposing (formII)
+import ChordDiagrams.FormIII exposing (formIII)
+import ChordDiagrams.Types exposing (Note, Barre, Fingering(..))
 
 
 -- CONSTANTS!
 
 
+diagram_inset : Int
 diagram_inset =
     20
 
 
+diagram_inset_ : String
 diagram_inset_ =
     toString diagram_inset
 
 
+fret_space : Int
 fret_space =
     45
 
 
+string_space : Int
 string_space =
     32
 
 
-
--- string_space = fret_length // 5
-
-
+num_frets : Int
 num_frets =
     7
 
@@ -47,6 +47,7 @@ num_frets =
 -- number of frets diagrams have
 
 
+num_strings : Int
 num_strings =
     6
 
@@ -55,46 +56,57 @@ num_strings =
 -- in case we make a Djent Chord helper! :v:
 
 
+diagram_height : Int
 diagram_height =
     (num_frets * fret_space) + (diagram_inset * 2)
 
 
+diagram_width : Int
 diagram_width =
     ((num_strings - 1) * string_space) + (diagram_inset * 2)
 
 
+string_length : Int
 string_length =
     (num_frets * fret_space)
 
 
+string_length_ : String
 string_length_ =
     toString string_length
 
 
+fret_length : Int
 fret_length =
     ((num_strings - 1) * string_space)
 
 
+fret_length_ : String
 fret_length_ =
     toString fret_length
 
 
+fret_stroke : String
 fret_stroke =
     "4"
 
 
+string_stroke : String
 string_stroke =
     "2"
 
 
+muteColor : String
 muteColor =
     "#d5939b"
 
 
+rootColor : String
 rootColor =
     "#259577"
 
 
+blackColor : String
 blackColor =
     "#333333"
 
@@ -124,7 +136,7 @@ chordData chordForm chordName =
 -- draws an SVG Path at a given Y position
 
 
-fret : String -> Html Msg
+fret : String -> Html msg
 fret ypos =
     Svg.path
         [ d ("M" ++ diagram_inset_ ++ " " ++ ypos ++ " h " ++ fret_length_)
@@ -149,7 +161,7 @@ fretYs =
 -- draws all the frets for the diagram
 
 
-frets : List (Html Msg)
+frets : List (Html msg)
 frets =
     List.map fret fretYs
 
@@ -242,7 +254,7 @@ hasNotes stringNum fingerngs =
 -- it returns an empty text node
 
 
-muteX : Int -> Bool -> Html Msg
+muteX : Int -> Bool -> Html msg
 muteX stringNum gotNotes =
     let
         xcoord =
@@ -269,7 +281,7 @@ muteX stringNum gotNotes =
 -- differently if there are no notes on it.
 
 
-renderString : List Fingering -> Int -> Html Msg
+renderString : List Fingering -> Int -> Html msg
 renderString stringData index =
     let
         notes =
@@ -296,7 +308,7 @@ renderString stringData index =
 -- maps over string data and returns a List of SVG Paths of the strings
 
 
-drawStrings : List Fingering -> List (Html Msg)
+drawStrings : List Fingering -> List (Html msg)
 drawStrings stringData =
     let
         render =
@@ -309,7 +321,7 @@ drawStrings stringData =
 -- draws a dot or barre block for a given fingering in a chord
 
 
-drawFingering : Fingering -> Html Msg
+drawFingering : Fingering -> Html msg
 drawFingering fingering =
     case fingering of
         Single note ->
@@ -327,7 +339,7 @@ drawFingering fingering =
 -- is the root note.
 
 
-dot : Note -> Html Msg
+dot : Note -> Html msg
 dot note =
     let
         fillColor =
@@ -366,7 +378,7 @@ dot note =
 -- draws a "ghost" note element for chord shapes that lack a root note
 
 
-ghostDot : Note -> Html Msg
+ghostDot : Note -> Html msg
 ghostDot note =
     let
         xcoord =
@@ -390,7 +402,7 @@ ghostDot note =
 -- draws a rectangle where your finger barres the string. Hooray.
 
 
-barreBlock : Barre -> Html Msg
+barreBlock : Barre -> Html msg
 barreBlock barre =
     let
         xcoord =
@@ -441,7 +453,7 @@ barreBlock barre =
 -- root in it. Otherwise an empty node
 
 
-barreRootSquare : Maybe Int -> Int -> Html Msg
+barreRootSquare : Maybe Int -> Int -> Html msg
 barreRootSquare string fret =
     case string of
         Nothing ->
@@ -472,7 +484,7 @@ barreRootSquare string fret =
 -- for each one, return an Svg.g that has dot childrens
 
 
-drawDots : List Fingering -> List (Html Msg)
+drawDots : List Fingering -> List (Html msg)
 drawDots stringData =
     List.map drawFingering stringData
 
@@ -481,7 +493,7 @@ drawDots stringData =
 -- Draws the box diagram for a chord
 
 
-chordView : Int -> List Fingering -> Html Msg
+chordView : Int -> List Fingering -> Html msg
 chordView index theChord =
     let
         h =
@@ -529,7 +541,7 @@ chordInfo chordForm chordName =
 -- Generate a chord diagram(s) for a given form and chord
 
 
-chordDiagram : String -> String -> Html Msg
+chordDiagram : String -> String -> Html msg
 chordDiagram chordForm chordName =
     let
         theChords =
@@ -546,7 +558,7 @@ chordDiagram chordForm chordName =
             [ h1
                 [ class "currentChord__title contentTitle" ]
                 [ text (chordInfo chordForm chordName) ]
-              -- , Chords.chordDiagram model.selectedForm model.selectedChord
+              -- , ChordDiagrams.chordDiagram model.selectedForm model.selectedChord
             , Svg.svg
                 [ width w, height h, viewBox ("0 0 " ++ w ++ " " ++ h) ]
                 (List.indexedMap chordView theChords)

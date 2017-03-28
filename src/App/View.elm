@@ -1,18 +1,27 @@
-module PageElements.Views exposing (..)
-
-{-
-   Static Stuff that is just plain old HTML!
--}
+module App.View exposing (rootView)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Messages exposing (Msg(..))
+
+import App.Model exposing (Model)
+import App.Messages exposing (..)
+
+import ChordBrowser.View
+
+
+rootView : Model -> Html Msg
+rootView model =
+    div [ class "appContainer" ]
+        [ pageHeader
+        , Html.map BrowserMsg (ChordBrowser.View.rootView model.browser) -- HOLY CRAPi!  Wraps Msg w/o kid knowing nothing about it!
+        , pageFooter
+        ]
 
 
 -- Page Header
 
 
-pageHeader : Html Msg
+pageHeader : Html msg
 pageHeader =
     header
         [ class "appHeader outerContainer" ]
@@ -26,7 +35,7 @@ pageHeader =
 -- Footer
 
 
-pageFooter : Html Msg
+pageFooter : Html msg
 pageFooter =
     footer
         [ class "appFooter outerContainer" ]

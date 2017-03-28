@@ -1,4 +1,4 @@
-module Chords.Types
+module ChordDiagrams.Types
     exposing
         ( Note
         , Barre
@@ -13,10 +13,6 @@ type Fingering
     = Single Note
     | Barred Barre
     | Ghost Note
-
-
-
--- TODO: convert this to Finger or something?? I guess Note is okay for now..
 
 
 type alias Note =

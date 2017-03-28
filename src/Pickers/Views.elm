@@ -111,6 +111,7 @@ onChordSelect node =
 -- this will be used all over I think!
 
 
+grabNodeText : Json.Decoder String
 grabNodeText =
     Json.at [ "target", "textContent" ] Json.string
 
