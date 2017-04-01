@@ -1,105 +1,25 @@
-module Pickers.Views exposing (..)
+module Pickers.Views
+    exposing
+        ( singleSelectFormList
+        , singleSelectChordList
+        )
 
 import Html exposing (Html, text, li, ul, section, h1, div)
 import Html.Attributes exposing (..)
 import Html.Events exposing (on)
 import Json.Decode as Json
+import Pickers.Data exposing (chordForms, chordNames)
 
 
--- Gives a list of all the names of all the chords. Well, at least the
--- ones in the book.
-
-
-chordNames : List String
-chordNames =
-    [ "Major"
-    , "Maj7"
-    , "7"
-    , "Maj6"
-    , "minor"
-    , "minor/Maj7"
-    , "m7"
-    , "m6"
-    , "Maj9"
-    , "m9"
-    , "Maj6/9"
-    , "9"
-    , "7(b9)"
-    , "7(#9)"
-    , "o"
-    , "7(b5)"
-    , "7(#5)"
-    , "Maj7(#5)"
-    , "Maj7(b5)"
-    , "m7(b5)"
-    , "7sus4"
-    , "m11"
-    , "9sus4 / 11"
-    , "9(+11)"
-    , "13"
-    , "13(b9)"
-    , "13(#9)"
-    ]
-
-
-
--- Gives a list of all ten "forms" describes in the book
--- TODO : move this out of here
-
-
-chordForms : List String
-chordForms =
-    [ "I"
-    , "II"
-    , "III"
-      {-
-         , "IV"
-         , "V"
-         , "VI"
-         , "VII"
-         , "VIII"
-         , "IX"
-         , "X"
-      -}
-    ]
-
-
-
--- List of all the musical  notes / keys. Even the wierd ones.
--- TODO : move this out of here
-
-
-keys : List String
-keys =
-    [ "Ab"
-    , "A"
-    , "A♯"
-    , "Bb"
-    , "B"
-    , "B#"
-    , "Cb"
-    , "C"
-    , "C#"
-    , "Db"
-    , "D"
-    , "D#"
-    , "Eb"
-    , "E"
-    , "E#"
-    , "Fb"
-    , "F"
-    , "F#"
-    , "Gb"
-    , "G"
-    , "G#"
-    ]
-
-
-
+-- import Pickers.Types exposing (..)
 -- ##################
 -- custom event handler for clicking that calls a special function to get
 -- at the node text
--- onChordSelect : (String -> msg) -> Html.Attribute msg
+
+
+grabNodeText : Json.Decoder String
+grabNodeText =
+    Json.at [ "target", "textContent" ] Json.string
 
 
 onChordSelect : (String -> msg) -> Html.Attribute msg
@@ -108,31 +28,36 @@ onChordSelect node =
 
 
 
--- this will be used all over I think!
-
-
-grabNodeText : Json.Decoder String
-grabNodeText =
-    Json.at [ "target", "textContent" ] Json.string
-
-
-
--- ##################
 -- Display of a single chord name. Note the fancy custom event so
 -- I can get the text from the node
 
 
 chordListItem : (String -> msg) -> String -> String -> Html msg
 chordListItem msg selectedChord chord =
-    li
-        [ onChordSelect msg
-        , classList [ ( "chordList__item", True ), ( "chordList__item--selected", (selectedChord == chord) ) ]
-        ]
-        [ text chord ]
+    let
+        selected =
+            selectedChord == chord
+    in
+        li
+            [ onChordSelect msg
+            , classList [ ( "chordList__item", True ), ( "chordList__item--selected", selected ) ]
+            ]
+            [ text chord ]
 
 
-chordListView : (String -> msg) -> String -> Html msg
-chordListView msg selectedChord =
+
+{-
+       TODO: compose two versions of this function: one that takes a
+       SelectedChords and one that takes a String (like now)
+
+       The itemMapper is the only thing that changes based on input, so
+       bust out the HTML bit as a function to reuse and you are good.
+   -
+-}
+
+
+singleSelectChordList : (String -> msg) -> String -> Html msg
+singleSelectChordList msg selectedChord =
     let
         itemMapper =
             chordListItem msg selectedChord
@@ -140,26 +65,18 @@ chordListView msg selectedChord =
         chords =
             List.map itemMapper chordNames
     in
-        section
-            [ class "chordList" ]
-            [ h1
-                [ class "chordList__header contentTitle" ]
-                [ text "Chord" ]
-            , ul
-                [ class "chordList__list" ]
-                chords
-            ]
+        chordListView chords
 
 
 
 -- Display of a single Form Name
 
 
-formListItem : (String -> msg) -> String -> String -> Html msg
-formListItem msg selectedForm form =
+formListItem : (String -> msg) -> (String -> Bool) -> String -> Html msg
+formListItem msg test form =
     li
         [ onFormSelect msg
-        , classList [ ( "formList__item", True ), ( "formList__item--selected", (selectedForm == form) ) ]
+        , classList [ ( "formList__item", True ), ( "formList__item--selected", (test form) ) ]
         ]
         [ text form ]
 
@@ -177,35 +94,67 @@ onFormSelect node =
 
 -- List of all the Forms
 
+testStr : String -> String -> Bool
+testStr a b =
+    a == b
 
-formListView : (String -> msg) -> String -> Html msg
-formListView msg selectedForm =
+
+testList : List String -> String -> Bool
+testList selectedThings testThing =
+    flip List.member selectedThings testThing
+
+
+singleSelectFormList : (String -> msg) -> String -> Html msg
+singleSelectFormList msg selectedForm =
     let
+        test = testStr selectedForm
         itemMapper =
-            formListItem msg selectedForm
+            formListItem msg test 
 
-        items =
+        formItems =
             List.map itemMapper chordForms
     in
-        section
-            [ class "formList" ]
-            [ h1
-                [ class "formList__header contentTitle" ]
-                [ text "Form" ]
-            , ul
-                [ class "formList__list" ]
-                items
-            ]
+        formListView formItems
 
 
-pickerViews : ( String -> msg, String -> msg ) -> String -> String -> Html msg
-pickerViews msgs selectedForm selectedChord =
+multiSelectFormList : (String -> msg) -> List String -> Html msg
+multiSelectFormList msg selectedForms =
     let
-        ( chordMsg, formMsg ) =
-            msgs
+        test = testList selectedForms
+        itemMapper =
+            formListItem msg test
+
+        formItems =
+            List.map itemMapper chordForms
     in
-        div
-            [ class "pickerViews" ]
-            [ chordListView chordMsg selectedChord
-            , formListView formMsg selectedForm
-            ]
+        formListView formItems
+
+
+
+chordListView : List (Html msg) -> Html msg
+chordListView chords =
+    listView "chords" chords
+
+
+formListView : List (Html msg) -> Html msg
+formListView items =
+    listView "form" items
+
+
+listView : String -> List (Html msg) -> Html msg
+listView classSuffix items =
+    let
+        baseClass = classSuffix ++ "List"
+        headerClass = baseClass ++ "__header contentTitle"
+        listClass = baseClass ++ "__list"
+    in
+        section
+            [ class baseClass ]
+            [ h1
+                [ class headerClass ]
+                [ text classSuffix ]
+            , ul
+                [ class listClass ]
+                items
+        ]
+

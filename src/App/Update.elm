@@ -1,6 +1,6 @@
 module App.Update exposing (update)
 
-import App.Model exposing (Model)
+import App.Model exposing (Model, Page(..))
 import App.Messages exposing (..)
 
 
@@ -15,6 +15,11 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        UrlChange location ->
+            ( { model | page = pageFromHash location.hash }
+            , Cmd.none
+            )
+
         BrowserMsg browserMsg ->
             let
                 ( browserModel, browserCmd ) =
@@ -26,6 +31,19 @@ update msg model =
 
         FlashcardsMsg msg ->
             ( model, Cmd.none )
+
+
+pageFromHash : String -> Page
+pageFromHash hash =
+    case hash of
+        "#flashcards" ->
+            FlashcardPage
+
+        "#browse" ->
+            BrowsePage
+
+        _ ->
+            BrowsePage
 
 
 

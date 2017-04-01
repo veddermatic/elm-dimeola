@@ -1,24 +1,32 @@
-module App.Model exposing (Model, init)
+module App.Model exposing (Model, init, Page(..))
 
+import Navigation
 import App.Messages exposing (Msg)
 
 import ChordBrowser.Model
 import ChordFlashcards.Model
 
 
+type Page
+    = BrowsePage
+    | FlashcardPage
+
+    
 type alias Model =
-    { browser : ChordBrowser.Model.Model 
+    { page : Page
+    , browser : ChordBrowser.Model.Model 
     , flashcards : ChordFlashcards.Model.Model
     }
 
 
 initialModel : Model
 initialModel =
-    { browser = ChordBrowser.Model.init
+    { page = BrowsePage 
+    , browser = ChordBrowser.Model.init
     , flashcards = ChordFlashcards.Model.init
     }
 
 
-init : ( Model, Cmd Msg )
-init =
+init : Navigation.Location -> ( Model, Cmd Msg )
+init location =
     ( initialModel, Cmd.none )
