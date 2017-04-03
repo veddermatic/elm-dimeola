@@ -1,4 +1,6 @@
-
+/* ----------------------- *\
+    GLOBAL
+\* ----------------------- */
 *, *:before, *:after {
     margin: 0;
     padding: 0;
@@ -24,6 +26,9 @@ ul {
     flex-direction: column;
 }
 
+/* ----------------------- *\
+    HEADER
+\* ----------------------- */
 .appHeader {
     height: 72px;
     background-color: #4D4D4D;
@@ -37,16 +42,61 @@ ul {
     font-size: 24px;
 }
 
+/* ----------------------- *\
+    NAVIGATION
+\* ----------------------- */
+
+.appNavigation {
+    height: 48px;
+    background-color: #EA9737;
+}
+
+.appNavigation__list {
+    display: flex;
+}
+
+.appNavigation__item {
+}
+
+.appNavigation__item--active,
+.appNavigation__item:hover {
+    background-color: #F5AC58;
+}
+
+.appNavigation__item a {
+    display: block;
+    height: 48px;
+    line-height: 48px;
+    color: #333;
+    text-decoration: none;
+    padding: 0 16px;
+}
+
+/* ----------------------- *\
+    FOOTER
+\* ----------------------- */
+
+
 .appFooter {
     height: 40px;
-    background-color: #BFBFBF;
+    background-color: #bfb4af;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .appFooter__byline {
+    color: #666666;
+    font-size: 14px;
 }
+
+.appFooter__byline a {
+    text-decoration: none;
+    color: #b95c05;
+}
+/* ----------------------- *\
+    CONTENTS
+\* ----------------------- */
 
 .contentPane {
     flex: 1;
@@ -58,6 +108,8 @@ ul {
 
 .chordViewPane {
     width: 45%;
+}
+.chordView {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -113,3 +165,89 @@ ul {
     color: #e17717;
     border-color: #e17717;
 }
+
+/* ------------------------ *\
+   FLASHCARDS
+\* ------------------------ */
+.flashcardsContent {
+    width: 45%;
+    min-width: 440px;
+}
+
+.flashcardsHolder {
+    perspective: 1000px;
+    height: 440px;
+    width: 440px;
+}
+
+.flashcardInstructions__startButton {
+    margin-top: 32px;
+    border: none;
+    background-color: #226622;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 16px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 3px;
+}
+
+.flashcardInstructions__startButton:disabled {
+    opacity: 0.5;
+}
+
+.flashcardInstructions__stopButton {
+    margin-top: 32px;
+    border: none;
+    background-color: #662222;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 16px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 3px;
+}
+
+.flippable {
+    position: relative;
+    transition: 0.2s;
+	transform-style: preserve-3d;
+}
+
+.flipped {
+    transform: rotateY(180deg);
+}
+
+.flashcards__card {
+    display: flex;
+    justify-content: space-around;
+    align-content: center;
+    flex-direction: column;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 440px;
+    width: 440px;
+    border: 1px solid #999;
+}
+
+.flashcards__card--info {
+    padding: 10% 0;
+    transform: rotateY(0deg);
+    z-index: 1;
+}
+
+.flashcards__chordFormLabel {
+    text-align: center;
+    font-size: 64px;
+    line-height: 64px;
+}
+
+.flashcards__chordNameLabel {
+    text-align: center;
+    font-size: 64px;
+    line-height: 64px;
+}
+
+.flashcards__card--diagram {
+    transform: rotateY(-180deg);
+}
+

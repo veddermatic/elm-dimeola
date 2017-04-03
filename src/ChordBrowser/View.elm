@@ -20,6 +20,7 @@ rootView model =
             [ singleSelectChordList SelectChord model.selectedChord
             , singleSelectFormList SelectForm model.selectedForm
             ]
-        , chordDiagram model.selectedForm model.selectedChord 
+        , div
+            [ class "chordViewPane" ]
+            [ chordDiagram model.selectedForm model.selectedChord ]
         ]
-        -- [ pickerViews (SelectChord, SelectForm)  model.selectedForm model.selectedChord

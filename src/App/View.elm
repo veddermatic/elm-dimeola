@@ -12,7 +12,7 @@ rootView : Model -> Html Msg
 rootView model =
     div [ class "appContainer" ]
         [ pageHeader
-        , navBar
+        , navBar (reverseRoute model.page)
         , viewForPage model
         , pageFooter
         ]
@@ -59,7 +59,7 @@ pageFooter =
             [ text "source code on "
             , a
                 [ href "https://github.com/veddermatic/elm-dimeola" ]
-                [ text "github" ]
+                [ text "GitHub" ]
             ]
         ]
 
@@ -68,25 +68,31 @@ pageFooter =
 -- NAV BAR
 
 
-navBar : Html msg
-navBar =
-    nav [ class "appNavigation outerContainer" ]
-        [ ul
-            [ class "appNavigation__list" ]
-            [ li
-                [ class "appNavigation__item" ]
-                [ a
-                    [ href "#browse" ]
-                    [ text "Browse Chords" ]
-                ]
-            , li
-                [ class "appNavigation__item" ]
-                [ a
-                    [ href "#flashcards" ]
-                    [ text "Chord Flashcards" ]
-                ]
+navBar : String -> Html msg
+navBar activeURL =
+    let
+        navMapper = navItem activeURL
+    in
+        nav [ class "appNavigation outerContainer" ]
+            [ ul
+                [ class "appNavigation__list" ]
+                ( List.map navMapper [ ("#browse", "Browse"), ("#flashcards", "Flashcards") ] )
             ]
-        ]
+
+navItem : String -> (String, String) -> Html msg
+navItem activeLink linkData =
+    let
+        (url, label) = linkData
+    in
+        li
+            [ classList 
+                [ ( "appNavigation__item", True )
+                , ( "appNavigation__item--active", (url == activeLink) ) ]
+                ]
+            [ a
+                [ href url ]
+                [ text label ]
+            ]
 
 
 viewForPage : Model -> Html Msg
@@ -100,5 +106,11 @@ viewForPage model =
             Html.map FlashcardsMsg (ChordFlashcards.View.rootView model.flashcards)
 
 
+reverseRoute : Page -> String
+reverseRoute page =
+    case page of
+        FlashcardPage ->
+            "#flashcards"
 
--- HOLY CRAPi!  Wraps Msg w/o kid knowing nothing about it!
+        BrowsePage ->
+            "#browse"

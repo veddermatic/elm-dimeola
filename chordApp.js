@@ -2675,344 +2675,6 @@ var _elm_lang$core$Array$repeat = F2(
 	});
 var _elm_lang$core$Array$Array = {ctor: 'Array'};
 
-//import Native.Utils //
-
-var _elm_lang$core$Native_Char = function() {
-
-return {
-	fromCode: function(c) { return _elm_lang$core$Native_Utils.chr(String.fromCharCode(c)); },
-	toCode: function(c) { return c.charCodeAt(0); },
-	toUpper: function(c) { return _elm_lang$core$Native_Utils.chr(c.toUpperCase()); },
-	toLower: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLowerCase()); },
-	toLocaleUpper: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLocaleUpperCase()); },
-	toLocaleLower: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLocaleLowerCase()); }
-};
-
-}();
-var _elm_lang$core$Char$fromCode = _elm_lang$core$Native_Char.fromCode;
-var _elm_lang$core$Char$toCode = _elm_lang$core$Native_Char.toCode;
-var _elm_lang$core$Char$toLocaleLower = _elm_lang$core$Native_Char.toLocaleLower;
-var _elm_lang$core$Char$toLocaleUpper = _elm_lang$core$Native_Char.toLocaleUpper;
-var _elm_lang$core$Char$toLower = _elm_lang$core$Native_Char.toLower;
-var _elm_lang$core$Char$toUpper = _elm_lang$core$Native_Char.toUpper;
-var _elm_lang$core$Char$isBetween = F3(
-	function (low, high, $char) {
-		var code = _elm_lang$core$Char$toCode($char);
-		return (_elm_lang$core$Native_Utils.cmp(
-			code,
-			_elm_lang$core$Char$toCode(low)) > -1) && (_elm_lang$core$Native_Utils.cmp(
-			code,
-			_elm_lang$core$Char$toCode(high)) < 1);
-	});
-var _elm_lang$core$Char$isUpper = A2(
-	_elm_lang$core$Char$isBetween,
-	_elm_lang$core$Native_Utils.chr('A'),
-	_elm_lang$core$Native_Utils.chr('Z'));
-var _elm_lang$core$Char$isLower = A2(
-	_elm_lang$core$Char$isBetween,
-	_elm_lang$core$Native_Utils.chr('a'),
-	_elm_lang$core$Native_Utils.chr('z'));
-var _elm_lang$core$Char$isDigit = A2(
-	_elm_lang$core$Char$isBetween,
-	_elm_lang$core$Native_Utils.chr('0'),
-	_elm_lang$core$Native_Utils.chr('9'));
-var _elm_lang$core$Char$isOctDigit = A2(
-	_elm_lang$core$Char$isBetween,
-	_elm_lang$core$Native_Utils.chr('0'),
-	_elm_lang$core$Native_Utils.chr('7'));
-var _elm_lang$core$Char$isHexDigit = function ($char) {
-	return _elm_lang$core$Char$isDigit($char) || (A3(
-		_elm_lang$core$Char$isBetween,
-		_elm_lang$core$Native_Utils.chr('a'),
-		_elm_lang$core$Native_Utils.chr('f'),
-		$char) || A3(
-		_elm_lang$core$Char$isBetween,
-		_elm_lang$core$Native_Utils.chr('A'),
-		_elm_lang$core$Native_Utils.chr('F'),
-		$char));
-};
-
-//import Native.Utils //
-
-var _elm_lang$core$Native_Scheduler = function() {
-
-var MAX_STEPS = 10000;
-
-
-// TASKS
-
-function succeed(value)
-{
-	return {
-		ctor: '_Task_succeed',
-		value: value
-	};
-}
-
-function fail(error)
-{
-	return {
-		ctor: '_Task_fail',
-		value: error
-	};
-}
-
-function nativeBinding(callback)
-{
-	return {
-		ctor: '_Task_nativeBinding',
-		callback: callback,
-		cancel: null
-	};
-}
-
-function andThen(callback, task)
-{
-	return {
-		ctor: '_Task_andThen',
-		callback: callback,
-		task: task
-	};
-}
-
-function onError(callback, task)
-{
-	return {
-		ctor: '_Task_onError',
-		callback: callback,
-		task: task
-	};
-}
-
-function receive(callback)
-{
-	return {
-		ctor: '_Task_receive',
-		callback: callback
-	};
-}
-
-
-// PROCESSES
-
-function rawSpawn(task)
-{
-	var process = {
-		ctor: '_Process',
-		id: _elm_lang$core$Native_Utils.guid(),
-		root: task,
-		stack: null,
-		mailbox: []
-	};
-
-	enqueue(process);
-
-	return process;
-}
-
-function spawn(task)
-{
-	return nativeBinding(function(callback) {
-		var process = rawSpawn(task);
-		callback(succeed(process));
-	});
-}
-
-function rawSend(process, msg)
-{
-	process.mailbox.push(msg);
-	enqueue(process);
-}
-
-function send(process, msg)
-{
-	return nativeBinding(function(callback) {
-		rawSend(process, msg);
-		callback(succeed(_elm_lang$core$Native_Utils.Tuple0));
-	});
-}
-
-function kill(process)
-{
-	return nativeBinding(function(callback) {
-		var root = process.root;
-		if (root.ctor === '_Task_nativeBinding' && root.cancel)
-		{
-			root.cancel();
-		}
-
-		process.root = null;
-
-		callback(succeed(_elm_lang$core$Native_Utils.Tuple0));
-	});
-}
-
-function sleep(time)
-{
-	return nativeBinding(function(callback) {
-		var id = setTimeout(function() {
-			callback(succeed(_elm_lang$core$Native_Utils.Tuple0));
-		}, time);
-
-		return function() { clearTimeout(id); };
-	});
-}
-
-
-// STEP PROCESSES
-
-function step(numSteps, process)
-{
-	while (numSteps < MAX_STEPS)
-	{
-		var ctor = process.root.ctor;
-
-		if (ctor === '_Task_succeed')
-		{
-			while (process.stack && process.stack.ctor === '_Task_onError')
-			{
-				process.stack = process.stack.rest;
-			}
-			if (process.stack === null)
-			{
-				break;
-			}
-			process.root = process.stack.callback(process.root.value);
-			process.stack = process.stack.rest;
-			++numSteps;
-			continue;
-		}
-
-		if (ctor === '_Task_fail')
-		{
-			while (process.stack && process.stack.ctor === '_Task_andThen')
-			{
-				process.stack = process.stack.rest;
-			}
-			if (process.stack === null)
-			{
-				break;
-			}
-			process.root = process.stack.callback(process.root.value);
-			process.stack = process.stack.rest;
-			++numSteps;
-			continue;
-		}
-
-		if (ctor === '_Task_andThen')
-		{
-			process.stack = {
-				ctor: '_Task_andThen',
-				callback: process.root.callback,
-				rest: process.stack
-			};
-			process.root = process.root.task;
-			++numSteps;
-			continue;
-		}
-
-		if (ctor === '_Task_onError')
-		{
-			process.stack = {
-				ctor: '_Task_onError',
-				callback: process.root.callback,
-				rest: process.stack
-			};
-			process.root = process.root.task;
-			++numSteps;
-			continue;
-		}
-
-		if (ctor === '_Task_nativeBinding')
-		{
-			process.root.cancel = process.root.callback(function(newRoot) {
-				process.root = newRoot;
-				enqueue(process);
-			});
-
-			break;
-		}
-
-		if (ctor === '_Task_receive')
-		{
-			var mailbox = process.mailbox;
-			if (mailbox.length === 0)
-			{
-				break;
-			}
-
-			process.root = process.root.callback(mailbox.shift());
-			++numSteps;
-			continue;
-		}
-
-		throw new Error(ctor);
-	}
-
-	if (numSteps < MAX_STEPS)
-	{
-		return numSteps + 1;
-	}
-	enqueue(process);
-
-	return numSteps;
-}
-
-
-// WORK QUEUE
-
-var working = false;
-var workQueue = [];
-
-function enqueue(process)
-{
-	workQueue.push(process);
-
-	if (!working)
-	{
-		setTimeout(work, 0);
-		working = true;
-	}
-}
-
-function work()
-{
-	var numSteps = 0;
-	var process;
-	while (numSteps < MAX_STEPS && (process = workQueue.shift()))
-	{
-		if (process.root)
-		{
-			numSteps = step(numSteps, process);
-		}
-	}
-	if (!process)
-	{
-		working = false;
-		return;
-	}
-	setTimeout(work, 0);
-}
-
-
-return {
-	succeed: succeed,
-	fail: fail,
-	nativeBinding: nativeBinding,
-	andThen: F2(andThen),
-	onError: F2(onError),
-	receive: receive,
-
-	spawn: spawn,
-	kill: kill,
-	sleep: sleep,
-	send: F2(send),
-
-	rawSpawn: rawSpawn,
-	rawSend: rawSend
-};
-
-}();
 //import //
 
 var _elm_lang$core$Native_Platform = function() {
@@ -3573,6 +3235,287 @@ return {
 
 }();
 
+//import Native.Utils //
+
+var _elm_lang$core$Native_Scheduler = function() {
+
+var MAX_STEPS = 10000;
+
+
+// TASKS
+
+function succeed(value)
+{
+	return {
+		ctor: '_Task_succeed',
+		value: value
+	};
+}
+
+function fail(error)
+{
+	return {
+		ctor: '_Task_fail',
+		value: error
+	};
+}
+
+function nativeBinding(callback)
+{
+	return {
+		ctor: '_Task_nativeBinding',
+		callback: callback,
+		cancel: null
+	};
+}
+
+function andThen(callback, task)
+{
+	return {
+		ctor: '_Task_andThen',
+		callback: callback,
+		task: task
+	};
+}
+
+function onError(callback, task)
+{
+	return {
+		ctor: '_Task_onError',
+		callback: callback,
+		task: task
+	};
+}
+
+function receive(callback)
+{
+	return {
+		ctor: '_Task_receive',
+		callback: callback
+	};
+}
+
+
+// PROCESSES
+
+function rawSpawn(task)
+{
+	var process = {
+		ctor: '_Process',
+		id: _elm_lang$core$Native_Utils.guid(),
+		root: task,
+		stack: null,
+		mailbox: []
+	};
+
+	enqueue(process);
+
+	return process;
+}
+
+function spawn(task)
+{
+	return nativeBinding(function(callback) {
+		var process = rawSpawn(task);
+		callback(succeed(process));
+	});
+}
+
+function rawSend(process, msg)
+{
+	process.mailbox.push(msg);
+	enqueue(process);
+}
+
+function send(process, msg)
+{
+	return nativeBinding(function(callback) {
+		rawSend(process, msg);
+		callback(succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function kill(process)
+{
+	return nativeBinding(function(callback) {
+		var root = process.root;
+		if (root.ctor === '_Task_nativeBinding' && root.cancel)
+		{
+			root.cancel();
+		}
+
+		process.root = null;
+
+		callback(succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function sleep(time)
+{
+	return nativeBinding(function(callback) {
+		var id = setTimeout(function() {
+			callback(succeed(_elm_lang$core$Native_Utils.Tuple0));
+		}, time);
+
+		return function() { clearTimeout(id); };
+	});
+}
+
+
+// STEP PROCESSES
+
+function step(numSteps, process)
+{
+	while (numSteps < MAX_STEPS)
+	{
+		var ctor = process.root.ctor;
+
+		if (ctor === '_Task_succeed')
+		{
+			while (process.stack && process.stack.ctor === '_Task_onError')
+			{
+				process.stack = process.stack.rest;
+			}
+			if (process.stack === null)
+			{
+				break;
+			}
+			process.root = process.stack.callback(process.root.value);
+			process.stack = process.stack.rest;
+			++numSteps;
+			continue;
+		}
+
+		if (ctor === '_Task_fail')
+		{
+			while (process.stack && process.stack.ctor === '_Task_andThen')
+			{
+				process.stack = process.stack.rest;
+			}
+			if (process.stack === null)
+			{
+				break;
+			}
+			process.root = process.stack.callback(process.root.value);
+			process.stack = process.stack.rest;
+			++numSteps;
+			continue;
+		}
+
+		if (ctor === '_Task_andThen')
+		{
+			process.stack = {
+				ctor: '_Task_andThen',
+				callback: process.root.callback,
+				rest: process.stack
+			};
+			process.root = process.root.task;
+			++numSteps;
+			continue;
+		}
+
+		if (ctor === '_Task_onError')
+		{
+			process.stack = {
+				ctor: '_Task_onError',
+				callback: process.root.callback,
+				rest: process.stack
+			};
+			process.root = process.root.task;
+			++numSteps;
+			continue;
+		}
+
+		if (ctor === '_Task_nativeBinding')
+		{
+			process.root.cancel = process.root.callback(function(newRoot) {
+				process.root = newRoot;
+				enqueue(process);
+			});
+
+			break;
+		}
+
+		if (ctor === '_Task_receive')
+		{
+			var mailbox = process.mailbox;
+			if (mailbox.length === 0)
+			{
+				break;
+			}
+
+			process.root = process.root.callback(mailbox.shift());
+			++numSteps;
+			continue;
+		}
+
+		throw new Error(ctor);
+	}
+
+	if (numSteps < MAX_STEPS)
+	{
+		return numSteps + 1;
+	}
+	enqueue(process);
+
+	return numSteps;
+}
+
+
+// WORK QUEUE
+
+var working = false;
+var workQueue = [];
+
+function enqueue(process)
+{
+	workQueue.push(process);
+
+	if (!working)
+	{
+		setTimeout(work, 0);
+		working = true;
+	}
+}
+
+function work()
+{
+	var numSteps = 0;
+	var process;
+	while (numSteps < MAX_STEPS && (process = workQueue.shift()))
+	{
+		if (process.root)
+		{
+			numSteps = step(numSteps, process);
+		}
+	}
+	if (!process)
+	{
+		working = false;
+		return;
+	}
+	setTimeout(work, 0);
+}
+
+
+return {
+	succeed: succeed,
+	fail: fail,
+	nativeBinding: nativeBinding,
+	andThen: F2(andThen),
+	onError: F2(onError),
+	receive: receive,
+
+	spawn: spawn,
+	kill: kill,
+	sleep: sleep,
+	send: F2(send),
+
+	rawSpawn: rawSpawn,
+	rawSend: rawSend
+};
+
+}();
 var _elm_lang$core$Platform_Cmd$batch = _elm_lang$core$Native_Platform.batch;
 var _elm_lang$core$Platform_Cmd$none = _elm_lang$core$Platform_Cmd$batch(
 	{ctor: '[]'});
@@ -3745,6 +3688,203 @@ var _elm_lang$core$Result$fromMaybe = F2(
 			return _elm_lang$core$Result$Err(err);
 		}
 	});
+
+var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
+var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
+var _elm_lang$core$Task$spawnCmd = F2(
+	function (router, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Scheduler.spawn(
+			A2(
+				_elm_lang$core$Task$andThen,
+				_elm_lang$core$Platform$sendToApp(router),
+				_p1._0));
+	});
+var _elm_lang$core$Task$fail = _elm_lang$core$Native_Scheduler.fail;
+var _elm_lang$core$Task$mapError = F2(
+	function (convert, task) {
+		return A2(
+			_elm_lang$core$Task$onError,
+			function (_p2) {
+				return _elm_lang$core$Task$fail(
+					convert(_p2));
+			},
+			task);
+	});
+var _elm_lang$core$Task$succeed = _elm_lang$core$Native_Scheduler.succeed;
+var _elm_lang$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return _elm_lang$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return _elm_lang$core$Task$succeed(
+							A2(func, a, b));
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map3 = F4(
+	function (func, taskA, taskB, taskC) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return _elm_lang$core$Task$succeed(
+									A3(func, a, b, c));
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map4 = F5(
+	function (func, taskA, taskB, taskC, taskD) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									function (d) {
+										return _elm_lang$core$Task$succeed(
+											A4(func, a, b, c, d));
+									},
+									taskD);
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map5 = F6(
+	function (func, taskA, taskB, taskC, taskD, taskE) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									function (d) {
+										return A2(
+											_elm_lang$core$Task$andThen,
+											function (e) {
+												return _elm_lang$core$Task$succeed(
+													A5(func, a, b, c, d, e));
+											},
+											taskE);
+									},
+									taskD);
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$sequence = function (tasks) {
+	var _p3 = tasks;
+	if (_p3.ctor === '[]') {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '[]'});
+	} else {
+		return A3(
+			_elm_lang$core$Task$map2,
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_p3._0,
+			_elm_lang$core$Task$sequence(_p3._1));
+	}
+};
+var _elm_lang$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			_elm_lang$core$Task$map,
+			function (_p4) {
+				return {ctor: '_Tuple0'};
+			},
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Task$spawnCmd(router),
+					commands)));
+	});
+var _elm_lang$core$Task$init = _elm_lang$core$Task$succeed(
+	{ctor: '_Tuple0'});
+var _elm_lang$core$Task$onSelfMsg = F3(
+	function (_p7, _p6, _p5) {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '_Tuple0'});
+	});
+var _elm_lang$core$Task$command = _elm_lang$core$Native_Platform.leaf('Task');
+var _elm_lang$core$Task$Perform = function (a) {
+	return {ctor: 'Perform', _0: a};
+};
+var _elm_lang$core$Task$perform = F2(
+	function (toMessage, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$Perform(
+				A2(_elm_lang$core$Task$map, toMessage, task)));
+	});
+var _elm_lang$core$Task$attempt = F2(
+	function (resultToMessage, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$Perform(
+				A2(
+					_elm_lang$core$Task$onError,
+					function (_p8) {
+						return _elm_lang$core$Task$succeed(
+							resultToMessage(
+								_elm_lang$core$Result$Err(_p8)));
+					},
+					A2(
+						_elm_lang$core$Task$andThen,
+						function (_p9) {
+							return _elm_lang$core$Task$succeed(
+								resultToMessage(
+									_elm_lang$core$Result$Ok(_p9)));
+						},
+						task))));
+	});
+var _elm_lang$core$Task$cmdMap = F2(
+	function (tagger, _p10) {
+		var _p11 = _p10;
+		return _elm_lang$core$Task$Perform(
+			A2(_elm_lang$core$Task$map, tagger, _p11._0));
+	});
+_elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
 
 //import Native.Utils //
 
@@ -4115,6 +4255,63 @@ return {
 };
 
 }();
+
+//import Native.Utils //
+
+var _elm_lang$core$Native_Char = function() {
+
+return {
+	fromCode: function(c) { return _elm_lang$core$Native_Utils.chr(String.fromCharCode(c)); },
+	toCode: function(c) { return c.charCodeAt(0); },
+	toUpper: function(c) { return _elm_lang$core$Native_Utils.chr(c.toUpperCase()); },
+	toLower: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLowerCase()); },
+	toLocaleUpper: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLocaleUpperCase()); },
+	toLocaleLower: function(c) { return _elm_lang$core$Native_Utils.chr(c.toLocaleLowerCase()); }
+};
+
+}();
+var _elm_lang$core$Char$fromCode = _elm_lang$core$Native_Char.fromCode;
+var _elm_lang$core$Char$toCode = _elm_lang$core$Native_Char.toCode;
+var _elm_lang$core$Char$toLocaleLower = _elm_lang$core$Native_Char.toLocaleLower;
+var _elm_lang$core$Char$toLocaleUpper = _elm_lang$core$Native_Char.toLocaleUpper;
+var _elm_lang$core$Char$toLower = _elm_lang$core$Native_Char.toLower;
+var _elm_lang$core$Char$toUpper = _elm_lang$core$Native_Char.toUpper;
+var _elm_lang$core$Char$isBetween = F3(
+	function (low, high, $char) {
+		var code = _elm_lang$core$Char$toCode($char);
+		return (_elm_lang$core$Native_Utils.cmp(
+			code,
+			_elm_lang$core$Char$toCode(low)) > -1) && (_elm_lang$core$Native_Utils.cmp(
+			code,
+			_elm_lang$core$Char$toCode(high)) < 1);
+	});
+var _elm_lang$core$Char$isUpper = A2(
+	_elm_lang$core$Char$isBetween,
+	_elm_lang$core$Native_Utils.chr('A'),
+	_elm_lang$core$Native_Utils.chr('Z'));
+var _elm_lang$core$Char$isLower = A2(
+	_elm_lang$core$Char$isBetween,
+	_elm_lang$core$Native_Utils.chr('a'),
+	_elm_lang$core$Native_Utils.chr('z'));
+var _elm_lang$core$Char$isDigit = A2(
+	_elm_lang$core$Char$isBetween,
+	_elm_lang$core$Native_Utils.chr('0'),
+	_elm_lang$core$Native_Utils.chr('9'));
+var _elm_lang$core$Char$isOctDigit = A2(
+	_elm_lang$core$Char$isBetween,
+	_elm_lang$core$Native_Utils.chr('0'),
+	_elm_lang$core$Native_Utils.chr('7'));
+var _elm_lang$core$Char$isHexDigit = function ($char) {
+	return _elm_lang$core$Char$isDigit($char) || (A3(
+		_elm_lang$core$Char$isBetween,
+		_elm_lang$core$Native_Utils.chr('a'),
+		_elm_lang$core$Native_Utils.chr('f'),
+		$char) || A3(
+		_elm_lang$core$Char$isBetween,
+		_elm_lang$core$Native_Utils.chr('A'),
+		_elm_lang$core$Native_Utils.chr('F'),
+		$char));
+};
 
 var _elm_lang$core$String$fromList = _elm_lang$core$Native_String.fromList;
 var _elm_lang$core$String$toList = _elm_lang$core$Native_String.toList;
@@ -5077,8 +5274,1001 @@ var _elm_lang$core$Dict$diff = F2(
 			t2);
 	});
 
+//import Native.Scheduler //
+
+var _elm_lang$core$Native_Time = function() {
+
+var now = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+{
+	callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
+});
+
+function setInterval_(interval, task)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var id = setInterval(function() {
+			_elm_lang$core$Native_Scheduler.rawSpawn(task);
+		}, interval);
+
+		return function() { clearInterval(id); };
+	});
+}
+
+return {
+	now: now,
+	setInterval_: F2(setInterval_)
+};
+
+}();
+var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
+var _elm_lang$core$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		var _p0 = intervals;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Task$succeed(processes);
+		} else {
+			var _p1 = _p0._0;
+			var spawnRest = function (id) {
+				return A3(
+					_elm_lang$core$Time$spawnHelp,
+					router,
+					_p0._1,
+					A3(_elm_lang$core$Dict$insert, _p1, id, processes));
+			};
+			var spawnTimer = _elm_lang$core$Native_Scheduler.spawn(
+				A2(
+					_elm_lang$core$Time$setInterval,
+					_p1,
+					A2(_elm_lang$core$Platform$sendToSelf, router, _p1)));
+			return A2(_elm_lang$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var _elm_lang$core$Time$addMySub = F2(
+	function (_p2, state) {
+		var _p3 = _p2;
+		var _p6 = _p3._1;
+		var _p5 = _p3._0;
+		var _p4 = A2(_elm_lang$core$Dict$get, _p5, state);
+		if (_p4.ctor === 'Nothing') {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{
+					ctor: '::',
+					_0: _p6,
+					_1: {ctor: '[]'}
+				},
+				state);
+		} else {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{ctor: '::', _0: _p6, _1: _p4._0},
+				state);
+		}
+	});
+var _elm_lang$core$Time$inMilliseconds = function (t) {
+	return t;
+};
+var _elm_lang$core$Time$millisecond = 1;
+var _elm_lang$core$Time$second = 1000 * _elm_lang$core$Time$millisecond;
+var _elm_lang$core$Time$minute = 60 * _elm_lang$core$Time$second;
+var _elm_lang$core$Time$hour = 60 * _elm_lang$core$Time$minute;
+var _elm_lang$core$Time$inHours = function (t) {
+	return t / _elm_lang$core$Time$hour;
+};
+var _elm_lang$core$Time$inMinutes = function (t) {
+	return t / _elm_lang$core$Time$minute;
+};
+var _elm_lang$core$Time$inSeconds = function (t) {
+	return t / _elm_lang$core$Time$second;
+};
+var _elm_lang$core$Time$now = _elm_lang$core$Native_Time.now;
+var _elm_lang$core$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _p7 = A2(_elm_lang$core$Dict$get, interval, state.taggers);
+		if (_p7.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var tellTaggers = function (time) {
+				return _elm_lang$core$Task$sequence(
+					A2(
+						_elm_lang$core$List$map,
+						function (tagger) {
+							return A2(
+								_elm_lang$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						_p7._0));
+			};
+			return A2(
+				_elm_lang$core$Task$andThen,
+				function (_p8) {
+					return _elm_lang$core$Task$succeed(state);
+				},
+				A2(_elm_lang$core$Task$andThen, tellTaggers, _elm_lang$core$Time$now));
+		}
+	});
+var _elm_lang$core$Time$subscription = _elm_lang$core$Native_Platform.leaf('Time');
+var _elm_lang$core$Time$State = F2(
+	function (a, b) {
+		return {taggers: a, processes: b};
+	});
+var _elm_lang$core$Time$init = _elm_lang$core$Task$succeed(
+	A2(_elm_lang$core$Time$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
+var _elm_lang$core$Time$onEffects = F3(
+	function (router, subs, _p9) {
+		var _p10 = _p9;
+		var rightStep = F3(
+			function (_p12, id, _p11) {
+				var _p13 = _p11;
+				return {
+					ctor: '_Tuple3',
+					_0: _p13._0,
+					_1: _p13._1,
+					_2: A2(
+						_elm_lang$core$Task$andThen,
+						function (_p14) {
+							return _p13._2;
+						},
+						_elm_lang$core$Native_Scheduler.kill(id))
+				};
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _p15) {
+				var _p16 = _p15;
+				return {
+					ctor: '_Tuple3',
+					_0: _p16._0,
+					_1: A3(_elm_lang$core$Dict$insert, interval, id, _p16._1),
+					_2: _p16._2
+				};
+			});
+		var leftStep = F3(
+			function (interval, taggers, _p17) {
+				var _p18 = _p17;
+				return {
+					ctor: '_Tuple3',
+					_0: {ctor: '::', _0: interval, _1: _p18._0},
+					_1: _p18._1,
+					_2: _p18._2
+				};
+			});
+		var newTaggers = A3(_elm_lang$core$List$foldl, _elm_lang$core$Time$addMySub, _elm_lang$core$Dict$empty, subs);
+		var _p19 = A6(
+			_elm_lang$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			_p10.processes,
+			{
+				ctor: '_Tuple3',
+				_0: {ctor: '[]'},
+				_1: _elm_lang$core$Dict$empty,
+				_2: _elm_lang$core$Task$succeed(
+					{ctor: '_Tuple0'})
+			});
+		var spawnList = _p19._0;
+		var existingDict = _p19._1;
+		var killTask = _p19._2;
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (newProcesses) {
+				return _elm_lang$core$Task$succeed(
+					A2(_elm_lang$core$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				_elm_lang$core$Task$andThen,
+				function (_p20) {
+					return A3(_elm_lang$core$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var _elm_lang$core$Time$Every = F2(
+	function (a, b) {
+		return {ctor: 'Every', _0: a, _1: b};
+	});
+var _elm_lang$core$Time$every = F2(
+	function (interval, tagger) {
+		return _elm_lang$core$Time$subscription(
+			A2(_elm_lang$core$Time$Every, interval, tagger));
+	});
+var _elm_lang$core$Time$subMap = F2(
+	function (f, _p21) {
+		var _p22 = _p21;
+		return A2(
+			_elm_lang$core$Time$Every,
+			_p22._0,
+			function (_p23) {
+				return f(
+					_p22._1(_p23));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
+
+var _elm_lang$core$Tuple$mapSecond = F2(
+	function (func, _p0) {
+		var _p1 = _p0;
+		return {
+			ctor: '_Tuple2',
+			_0: _p1._0,
+			_1: func(_p1._1)
+		};
+	});
+var _elm_lang$core$Tuple$mapFirst = F2(
+	function (func, _p2) {
+		var _p3 = _p2;
+		return {
+			ctor: '_Tuple2',
+			_0: func(_p3._0),
+			_1: _p3._1
+		};
+	});
+var _elm_lang$core$Tuple$second = function (_p4) {
+	var _p5 = _p4;
+	return _p5._1;
+};
+var _elm_lang$core$Tuple$first = function (_p6) {
+	var _p7 = _p6;
+	return _p7._0;
+};
+
+var _elm_lang$core$Random$onSelfMsg = F3(
+	function (_p1, _p0, seed) {
+		return _elm_lang$core$Task$succeed(seed);
+	});
+var _elm_lang$core$Random$magicNum8 = 2147483562;
+var _elm_lang$core$Random$range = function (_p2) {
+	return {ctor: '_Tuple2', _0: 0, _1: _elm_lang$core$Random$magicNum8};
+};
+var _elm_lang$core$Random$magicNum7 = 2147483399;
+var _elm_lang$core$Random$magicNum6 = 2147483563;
+var _elm_lang$core$Random$magicNum5 = 3791;
+var _elm_lang$core$Random$magicNum4 = 40692;
+var _elm_lang$core$Random$magicNum3 = 52774;
+var _elm_lang$core$Random$magicNum2 = 12211;
+var _elm_lang$core$Random$magicNum1 = 53668;
+var _elm_lang$core$Random$magicNum0 = 40014;
+var _elm_lang$core$Random$step = F2(
+	function (_p3, seed) {
+		var _p4 = _p3;
+		return _p4._0(seed);
+	});
+var _elm_lang$core$Random$onEffects = F3(
+	function (router, commands, seed) {
+		var _p5 = commands;
+		if (_p5.ctor === '[]') {
+			return _elm_lang$core$Task$succeed(seed);
+		} else {
+			var _p6 = A2(_elm_lang$core$Random$step, _p5._0._0, seed);
+			var value = _p6._0;
+			var newSeed = _p6._1;
+			return A2(
+				_elm_lang$core$Task$andThen,
+				function (_p7) {
+					return A3(_elm_lang$core$Random$onEffects, router, _p5._1, newSeed);
+				},
+				A2(_elm_lang$core$Platform$sendToApp, router, value));
+		}
+	});
+var _elm_lang$core$Random$listHelp = F4(
+	function (list, n, generate, seed) {
+		listHelp:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(n, 1) < 0) {
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$List$reverse(list),
+					_1: seed
+				};
+			} else {
+				var _p8 = generate(seed);
+				var value = _p8._0;
+				var newSeed = _p8._1;
+				var _v2 = {ctor: '::', _0: value, _1: list},
+					_v3 = n - 1,
+					_v4 = generate,
+					_v5 = newSeed;
+				list = _v2;
+				n = _v3;
+				generate = _v4;
+				seed = _v5;
+				continue listHelp;
+			}
+		}
+	});
+var _elm_lang$core$Random$minInt = -2147483648;
+var _elm_lang$core$Random$maxInt = 2147483647;
+var _elm_lang$core$Random$iLogBase = F2(
+	function (b, i) {
+		return (_elm_lang$core$Native_Utils.cmp(i, b) < 0) ? 1 : (1 + A2(_elm_lang$core$Random$iLogBase, b, (i / b) | 0));
+	});
+var _elm_lang$core$Random$command = _elm_lang$core$Native_Platform.leaf('Random');
+var _elm_lang$core$Random$Generator = function (a) {
+	return {ctor: 'Generator', _0: a};
+};
+var _elm_lang$core$Random$list = F2(
+	function (n, _p9) {
+		var _p10 = _p9;
+		return _elm_lang$core$Random$Generator(
+			function (seed) {
+				return A4(
+					_elm_lang$core$Random$listHelp,
+					{ctor: '[]'},
+					n,
+					_p10._0,
+					seed);
+			});
+	});
+var _elm_lang$core$Random$map = F2(
+	function (func, _p11) {
+		var _p12 = _p11;
+		return _elm_lang$core$Random$Generator(
+			function (seed0) {
+				var _p13 = _p12._0(seed0);
+				var a = _p13._0;
+				var seed1 = _p13._1;
+				return {
+					ctor: '_Tuple2',
+					_0: func(a),
+					_1: seed1
+				};
+			});
+	});
+var _elm_lang$core$Random$map2 = F3(
+	function (func, _p15, _p14) {
+		var _p16 = _p15;
+		var _p17 = _p14;
+		return _elm_lang$core$Random$Generator(
+			function (seed0) {
+				var _p18 = _p16._0(seed0);
+				var a = _p18._0;
+				var seed1 = _p18._1;
+				var _p19 = _p17._0(seed1);
+				var b = _p19._0;
+				var seed2 = _p19._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A2(func, a, b),
+					_1: seed2
+				};
+			});
+	});
+var _elm_lang$core$Random$pair = F2(
+	function (genA, genB) {
+		return A3(
+			_elm_lang$core$Random$map2,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			genA,
+			genB);
+	});
+var _elm_lang$core$Random$map3 = F4(
+	function (func, _p22, _p21, _p20) {
+		var _p23 = _p22;
+		var _p24 = _p21;
+		var _p25 = _p20;
+		return _elm_lang$core$Random$Generator(
+			function (seed0) {
+				var _p26 = _p23._0(seed0);
+				var a = _p26._0;
+				var seed1 = _p26._1;
+				var _p27 = _p24._0(seed1);
+				var b = _p27._0;
+				var seed2 = _p27._1;
+				var _p28 = _p25._0(seed2);
+				var c = _p28._0;
+				var seed3 = _p28._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A3(func, a, b, c),
+					_1: seed3
+				};
+			});
+	});
+var _elm_lang$core$Random$map4 = F5(
+	function (func, _p32, _p31, _p30, _p29) {
+		var _p33 = _p32;
+		var _p34 = _p31;
+		var _p35 = _p30;
+		var _p36 = _p29;
+		return _elm_lang$core$Random$Generator(
+			function (seed0) {
+				var _p37 = _p33._0(seed0);
+				var a = _p37._0;
+				var seed1 = _p37._1;
+				var _p38 = _p34._0(seed1);
+				var b = _p38._0;
+				var seed2 = _p38._1;
+				var _p39 = _p35._0(seed2);
+				var c = _p39._0;
+				var seed3 = _p39._1;
+				var _p40 = _p36._0(seed3);
+				var d = _p40._0;
+				var seed4 = _p40._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A4(func, a, b, c, d),
+					_1: seed4
+				};
+			});
+	});
+var _elm_lang$core$Random$map5 = F6(
+	function (func, _p45, _p44, _p43, _p42, _p41) {
+		var _p46 = _p45;
+		var _p47 = _p44;
+		var _p48 = _p43;
+		var _p49 = _p42;
+		var _p50 = _p41;
+		return _elm_lang$core$Random$Generator(
+			function (seed0) {
+				var _p51 = _p46._0(seed0);
+				var a = _p51._0;
+				var seed1 = _p51._1;
+				var _p52 = _p47._0(seed1);
+				var b = _p52._0;
+				var seed2 = _p52._1;
+				var _p53 = _p48._0(seed2);
+				var c = _p53._0;
+				var seed3 = _p53._1;
+				var _p54 = _p49._0(seed3);
+				var d = _p54._0;
+				var seed4 = _p54._1;
+				var _p55 = _p50._0(seed4);
+				var e = _p55._0;
+				var seed5 = _p55._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A5(func, a, b, c, d, e),
+					_1: seed5
+				};
+			});
+	});
+var _elm_lang$core$Random$andThen = F2(
+	function (callback, _p56) {
+		var _p57 = _p56;
+		return _elm_lang$core$Random$Generator(
+			function (seed) {
+				var _p58 = _p57._0(seed);
+				var result = _p58._0;
+				var newSeed = _p58._1;
+				var _p59 = callback(result);
+				var genB = _p59._0;
+				return genB(newSeed);
+			});
+	});
+var _elm_lang$core$Random$State = F2(
+	function (a, b) {
+		return {ctor: 'State', _0: a, _1: b};
+	});
+var _elm_lang$core$Random$initState = function (seed) {
+	var s = A2(_elm_lang$core$Basics$max, seed, 0 - seed);
+	var q = (s / (_elm_lang$core$Random$magicNum6 - 1)) | 0;
+	var s2 = A2(_elm_lang$core$Basics_ops['%'], q, _elm_lang$core$Random$magicNum7 - 1);
+	var s1 = A2(_elm_lang$core$Basics_ops['%'], s, _elm_lang$core$Random$magicNum6 - 1);
+	return A2(_elm_lang$core$Random$State, s1 + 1, s2 + 1);
+};
+var _elm_lang$core$Random$next = function (_p60) {
+	var _p61 = _p60;
+	var _p63 = _p61._1;
+	var _p62 = _p61._0;
+	var k2 = (_p63 / _elm_lang$core$Random$magicNum3) | 0;
+	var rawState2 = (_elm_lang$core$Random$magicNum4 * (_p63 - (k2 * _elm_lang$core$Random$magicNum3))) - (k2 * _elm_lang$core$Random$magicNum5);
+	var newState2 = (_elm_lang$core$Native_Utils.cmp(rawState2, 0) < 0) ? (rawState2 + _elm_lang$core$Random$magicNum7) : rawState2;
+	var k1 = (_p62 / _elm_lang$core$Random$magicNum1) | 0;
+	var rawState1 = (_elm_lang$core$Random$magicNum0 * (_p62 - (k1 * _elm_lang$core$Random$magicNum1))) - (k1 * _elm_lang$core$Random$magicNum2);
+	var newState1 = (_elm_lang$core$Native_Utils.cmp(rawState1, 0) < 0) ? (rawState1 + _elm_lang$core$Random$magicNum6) : rawState1;
+	var z = newState1 - newState2;
+	var newZ = (_elm_lang$core$Native_Utils.cmp(z, 1) < 0) ? (z + _elm_lang$core$Random$magicNum8) : z;
+	return {
+		ctor: '_Tuple2',
+		_0: newZ,
+		_1: A2(_elm_lang$core$Random$State, newState1, newState2)
+	};
+};
+var _elm_lang$core$Random$split = function (_p64) {
+	var _p65 = _p64;
+	var _p68 = _p65._1;
+	var _p67 = _p65._0;
+	var _p66 = _elm_lang$core$Tuple$second(
+		_elm_lang$core$Random$next(_p65));
+	var t1 = _p66._0;
+	var t2 = _p66._1;
+	var new_s2 = _elm_lang$core$Native_Utils.eq(_p68, 1) ? (_elm_lang$core$Random$magicNum7 - 1) : (_p68 - 1);
+	var new_s1 = _elm_lang$core$Native_Utils.eq(_p67, _elm_lang$core$Random$magicNum6 - 1) ? 1 : (_p67 + 1);
+	return {
+		ctor: '_Tuple2',
+		_0: A2(_elm_lang$core$Random$State, new_s1, t2),
+		_1: A2(_elm_lang$core$Random$State, t1, new_s2)
+	};
+};
+var _elm_lang$core$Random$Seed = function (a) {
+	return {ctor: 'Seed', _0: a};
+};
+var _elm_lang$core$Random$int = F2(
+	function (a, b) {
+		return _elm_lang$core$Random$Generator(
+			function (_p69) {
+				var _p70 = _p69;
+				var _p75 = _p70._0;
+				var base = 2147483561;
+				var f = F3(
+					function (n, acc, state) {
+						f:
+						while (true) {
+							var _p71 = n;
+							if (_p71 === 0) {
+								return {ctor: '_Tuple2', _0: acc, _1: state};
+							} else {
+								var _p72 = _p75.next(state);
+								var x = _p72._0;
+								var nextState = _p72._1;
+								var _v27 = n - 1,
+									_v28 = x + (acc * base),
+									_v29 = nextState;
+								n = _v27;
+								acc = _v28;
+								state = _v29;
+								continue f;
+							}
+						}
+					});
+				var _p73 = (_elm_lang$core$Native_Utils.cmp(a, b) < 0) ? {ctor: '_Tuple2', _0: a, _1: b} : {ctor: '_Tuple2', _0: b, _1: a};
+				var lo = _p73._0;
+				var hi = _p73._1;
+				var k = (hi - lo) + 1;
+				var n = A2(_elm_lang$core$Random$iLogBase, base, k);
+				var _p74 = A3(f, n, 1, _p75.state);
+				var v = _p74._0;
+				var nextState = _p74._1;
+				return {
+					ctor: '_Tuple2',
+					_0: lo + A2(_elm_lang$core$Basics_ops['%'], v, k),
+					_1: _elm_lang$core$Random$Seed(
+						_elm_lang$core$Native_Utils.update(
+							_p75,
+							{state: nextState}))
+				};
+			});
+	});
+var _elm_lang$core$Random$bool = A2(
+	_elm_lang$core$Random$map,
+	F2(
+		function (x, y) {
+			return _elm_lang$core$Native_Utils.eq(x, y);
+		})(1),
+	A2(_elm_lang$core$Random$int, 0, 1));
+var _elm_lang$core$Random$float = F2(
+	function (a, b) {
+		return _elm_lang$core$Random$Generator(
+			function (seed) {
+				var _p76 = A2(
+					_elm_lang$core$Random$step,
+					A2(_elm_lang$core$Random$int, _elm_lang$core$Random$minInt, _elm_lang$core$Random$maxInt),
+					seed);
+				var number = _p76._0;
+				var newSeed = _p76._1;
+				var negativeOneToOne = _elm_lang$core$Basics$toFloat(number) / _elm_lang$core$Basics$toFloat(_elm_lang$core$Random$maxInt - _elm_lang$core$Random$minInt);
+				var _p77 = (_elm_lang$core$Native_Utils.cmp(a, b) < 0) ? {ctor: '_Tuple2', _0: a, _1: b} : {ctor: '_Tuple2', _0: b, _1: a};
+				var lo = _p77._0;
+				var hi = _p77._1;
+				var scaled = ((lo + hi) / 2) + ((hi - lo) * negativeOneToOne);
+				return {ctor: '_Tuple2', _0: scaled, _1: newSeed};
+			});
+	});
+var _elm_lang$core$Random$initialSeed = function (n) {
+	return _elm_lang$core$Random$Seed(
+		{
+			state: _elm_lang$core$Random$initState(n),
+			next: _elm_lang$core$Random$next,
+			split: _elm_lang$core$Random$split,
+			range: _elm_lang$core$Random$range
+		});
+};
+var _elm_lang$core$Random$init = A2(
+	_elm_lang$core$Task$andThen,
+	function (t) {
+		return _elm_lang$core$Task$succeed(
+			_elm_lang$core$Random$initialSeed(
+				_elm_lang$core$Basics$round(t)));
+	},
+	_elm_lang$core$Time$now);
+var _elm_lang$core$Random$Generate = function (a) {
+	return {ctor: 'Generate', _0: a};
+};
+var _elm_lang$core$Random$generate = F2(
+	function (tagger, generator) {
+		return _elm_lang$core$Random$command(
+			_elm_lang$core$Random$Generate(
+				A2(_elm_lang$core$Random$map, tagger, generator)));
+	});
+var _elm_lang$core$Random$cmdMap = F2(
+	function (func, _p78) {
+		var _p79 = _p78;
+		return _elm_lang$core$Random$Generate(
+			A2(_elm_lang$core$Random$map, func, _p79._0));
+	});
+_elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Random$init, onEffects: _elm_lang$core$Random$onEffects, onSelfMsg: _elm_lang$core$Random$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Random$cmdMap};
+
 var _elm_lang$core$Debug$crash = _elm_lang$core$Native_Debug.crash;
 var _elm_lang$core$Debug$log = _elm_lang$core$Native_Debug.log;
+
+var _elm_community$random_extra$Random_Extra$andThen6 = F7(
+	function (constructor, generatorA, generatorB, generatorC, generatorD, generatorE, generatorF) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Random$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Random$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Random$andThen,
+									function (d) {
+										return A2(
+											_elm_lang$core$Random$andThen,
+											function (e) {
+												return A2(
+													_elm_lang$core$Random$andThen,
+													function (f) {
+														return A6(constructor, a, b, c, d, e, f);
+													},
+													generatorF);
+											},
+											generatorE);
+									},
+									generatorD);
+							},
+							generatorC);
+					},
+					generatorB);
+			},
+			generatorA);
+	});
+var _elm_community$random_extra$Random_Extra$andThen5 = F6(
+	function (constructor, generatorA, generatorB, generatorC, generatorD, generatorE) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Random$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Random$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Random$andThen,
+									function (d) {
+										return A2(
+											_elm_lang$core$Random$andThen,
+											function (e) {
+												return A5(constructor, a, b, c, d, e);
+											},
+											generatorE);
+									},
+									generatorD);
+							},
+							generatorC);
+					},
+					generatorB);
+			},
+			generatorA);
+	});
+var _elm_community$random_extra$Random_Extra$andThen4 = F5(
+	function (constructor, generatorA, generatorB, generatorC, generatorD) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Random$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Random$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Random$andThen,
+									function (d) {
+										return A4(constructor, a, b, c, d);
+									},
+									generatorD);
+							},
+							generatorC);
+					},
+					generatorB);
+			},
+			generatorA);
+	});
+var _elm_community$random_extra$Random_Extra$andThen3 = F4(
+	function (constructor, generatorA, generatorB, generatorC) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Random$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Random$andThen,
+							function (c) {
+								return A3(constructor, a, b, c);
+							},
+							generatorC);
+					},
+					generatorB);
+			},
+			generatorA);
+	});
+var _elm_community$random_extra$Random_Extra$andThen2 = F3(
+	function (constructor, generatorA, generatorB) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Random$andThen,
+					function (b) {
+						return A2(constructor, a, b);
+					},
+					generatorB);
+			},
+			generatorA);
+	});
+var _elm_community$random_extra$Random_Extra$rangeLengthList = F3(
+	function (minLength, maxLength, generator) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (len) {
+				return A2(_elm_lang$core$Random$list, len, generator);
+			},
+			A2(_elm_lang$core$Random$int, minLength, maxLength));
+	});
+var _elm_community$random_extra$Random_Extra$result = F3(
+	function (genBool, genErr, genVal) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (b) {
+				return b ? A2(_elm_lang$core$Random$map, _elm_lang$core$Result$Ok, genVal) : A2(_elm_lang$core$Random$map, _elm_lang$core$Result$Err, genErr);
+			},
+			genBool);
+	});
+var _elm_community$random_extra$Random_Extra$sample = function () {
+	var find = F2(
+		function (k, ys) {
+			find:
+			while (true) {
+				var _p0 = ys;
+				if (_p0.ctor === '[]') {
+					return _elm_lang$core$Maybe$Nothing;
+				} else {
+					if (_elm_lang$core$Native_Utils.eq(k, 0)) {
+						return _elm_lang$core$Maybe$Just(_p0._0);
+					} else {
+						var _v1 = k - 1,
+							_v2 = _p0._1;
+						k = _v1;
+						ys = _v2;
+						continue find;
+					}
+				}
+			}
+		});
+	return function (xs) {
+		return A2(
+			_elm_lang$core$Random$map,
+			function (i) {
+				return A2(find, i, xs);
+			},
+			A2(
+				_elm_lang$core$Random$int,
+				0,
+				_elm_lang$core$List$length(xs) - 1));
+	};
+}();
+var _elm_community$random_extra$Random_Extra$frequency = function (pairs) {
+	var pick = F2(
+		function (choices, n) {
+			pick:
+			while (true) {
+				var _p1 = choices;
+				if ((_p1.ctor === '::') && (_p1._0.ctor === '_Tuple2')) {
+					var _p2 = _p1._0._0;
+					if (_elm_lang$core$Native_Utils.cmp(n, _p2) < 1) {
+						return _p1._0._1;
+					} else {
+						var _v4 = _p1._1,
+							_v5 = n - _p2;
+						choices = _v4;
+						n = _v5;
+						continue pick;
+					}
+				} else {
+					return _elm_lang$core$Native_Utils.crashCase(
+						'Random.Extra',
+						{
+							start: {line: 154, column: 13},
+							end: {line: 162, column: 79}
+						},
+						_p1)('Empty list passed to Random.Extra.frequency!');
+				}
+			}
+		});
+	var total = _elm_lang$core$List$sum(
+		A2(
+			_elm_lang$core$List$map,
+			function (_p4) {
+				return _elm_lang$core$Basics$abs(
+					_elm_lang$core$Tuple$first(_p4));
+			},
+			pairs));
+	return A2(
+		_elm_lang$core$Random$andThen,
+		pick(pairs),
+		A2(_elm_lang$core$Random$float, 0, total));
+};
+var _elm_community$random_extra$Random_Extra$choices = function (gens) {
+	return _elm_community$random_extra$Random_Extra$frequency(
+		A2(
+			_elm_lang$core$List$map,
+			function (g) {
+				return {ctor: '_Tuple2', _0: 1, _1: g};
+			},
+			gens));
+};
+var _elm_community$random_extra$Random_Extra$choice = F2(
+	function (x, y) {
+		return A2(
+			_elm_lang$core$Random$map,
+			function (b) {
+				return b ? x : y;
+			},
+			_elm_lang$core$Random$bool);
+	});
+var _elm_community$random_extra$Random_Extra$oneIn = function (n) {
+	return A2(
+		_elm_lang$core$Random$map,
+		F2(
+			function (x, y) {
+				return _elm_lang$core$Native_Utils.eq(x, y);
+			})(1),
+		A2(_elm_lang$core$Random$int, 1, n));
+};
+var _elm_community$random_extra$Random_Extra$andMap = F2(
+	function (generator, funcGenerator) {
+		return A3(
+			_elm_lang$core$Random$map2,
+			F2(
+				function (x, y) {
+					return x(y);
+				}),
+			funcGenerator,
+			generator);
+	});
+var _elm_community$random_extra$Random_Extra$map6 = F7(
+	function (f, generatorA, generatorB, generatorC, generatorD, generatorE, generatorF) {
+		return A2(
+			_elm_community$random_extra$Random_Extra$andMap,
+			generatorF,
+			A6(_elm_lang$core$Random$map5, f, generatorA, generatorB, generatorC, generatorD, generatorE));
+	});
+var _elm_community$random_extra$Random_Extra$constant = function (value) {
+	return A2(
+		_elm_lang$core$Random$map,
+		function (_p5) {
+			return value;
+		},
+		_elm_lang$core$Random$bool);
+};
+var _elm_community$random_extra$Random_Extra$filter = F2(
+	function (predicate, generator) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (a) {
+				return predicate(a) ? _elm_community$random_extra$Random_Extra$constant(a) : A2(_elm_community$random_extra$Random_Extra$filter, predicate, generator);
+			},
+			generator);
+	});
+var _elm_community$random_extra$Random_Extra$combine = function (generators) {
+	var _p6 = generators;
+	if (_p6.ctor === '[]') {
+		return _elm_community$random_extra$Random_Extra$constant(
+			{ctor: '[]'});
+	} else {
+		return A3(
+			_elm_lang$core$Random$map2,
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_p6._0,
+			_elm_community$random_extra$Random_Extra$combine(_p6._1));
+	}
+};
+var _elm_community$random_extra$Random_Extra$maybe = F2(
+	function (genBool, genA) {
+		return A2(
+			_elm_lang$core$Random$andThen,
+			function (b) {
+				return b ? A2(_elm_lang$core$Random$map, _elm_lang$core$Maybe$Just, genA) : _elm_community$random_extra$Random_Extra$constant(_elm_lang$core$Maybe$Nothing);
+			},
+			genBool);
+	});
+
+var _elm_community$random_extra$Random_List$get = F2(
+	function (index, list) {
+		return _elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, index, list));
+	});
+var _elm_community$random_extra$Random_List$choose = function (list) {
+	if (_elm_lang$core$List$isEmpty(list)) {
+		return _elm_community$random_extra$Random_Extra$constant(
+			{ctor: '_Tuple2', _0: _elm_lang$core$Maybe$Nothing, _1: list});
+	} else {
+		var back = function (i) {
+			return A2(_elm_lang$core$List$drop, i + 1, list);
+		};
+		var front = function (i) {
+			return A2(_elm_lang$core$List$take, i, list);
+		};
+		var lastIndex = _elm_lang$core$List$length(list) - 1;
+		var gen = A2(_elm_lang$core$Random$int, 0, lastIndex);
+		return A2(
+			_elm_lang$core$Random$map,
+			function (index) {
+				return {
+					ctor: '_Tuple2',
+					_0: A2(_elm_community$random_extra$Random_List$get, index, list),
+					_1: A2(
+						_elm_lang$core$List$append,
+						front(index),
+						back(index))
+				};
+			},
+			gen);
+	}
+};
+var _elm_community$random_extra$Random_List$shuffle = function (list) {
+	if (_elm_lang$core$List$isEmpty(list)) {
+		return _elm_community$random_extra$Random_Extra$constant(list);
+	} else {
+		var helper = function (_p0) {
+			var _p1 = _p0;
+			var _p6 = _p1._0;
+			return A2(
+				_elm_lang$core$Random$andThen,
+				function (_p2) {
+					var _p3 = _p2;
+					var _p5 = _p3._1;
+					var _p4 = _p3._0;
+					if (_p4.ctor === 'Nothing') {
+						return _elm_community$random_extra$Random_Extra$constant(
+							{ctor: '_Tuple2', _0: _p6, _1: _p5});
+					} else {
+						return helper(
+							{
+								ctor: '_Tuple2',
+								_0: {ctor: '::', _0: _p4._0, _1: _p6},
+								_1: _p5
+							});
+					}
+				},
+				_elm_community$random_extra$Random_List$choose(_p1._1));
+		};
+		return A2(
+			_elm_lang$core$Random$map,
+			_elm_lang$core$Tuple$first,
+			helper(
+				{
+					ctor: '_Tuple2',
+					_0: {ctor: '[]'},
+					_1: list
+				}));
+	}
+};
 
 //import Maybe, Native.Array, Native.List, Native.Utils, Result //
 
@@ -5730,32 +6920,195 @@ var _elm_lang$core$Json_Decode$bool = _elm_lang$core$Native_Json.decodePrimitive
 var _elm_lang$core$Json_Decode$string = _elm_lang$core$Native_Json.decodePrimitive('string');
 var _elm_lang$core$Json_Decode$Decoder = {ctor: 'Decoder'};
 
-var _elm_lang$core$Tuple$mapSecond = F2(
-	function (func, _p0) {
-		var _p1 = _p0;
-		return {
-			ctor: '_Tuple2',
-			_0: _p1._0,
-			_1: func(_p1._1)
-		};
-	});
-var _elm_lang$core$Tuple$mapFirst = F2(
-	function (func, _p2) {
-		var _p3 = _p2;
-		return {
-			ctor: '_Tuple2',
-			_0: func(_p3._0),
-			_1: _p3._1
-		};
-	});
-var _elm_lang$core$Tuple$second = function (_p4) {
-	var _p5 = _p4;
-	return _p5._1;
+var _elm_lang$core$Process$kill = _elm_lang$core$Native_Scheduler.kill;
+var _elm_lang$core$Process$sleep = _elm_lang$core$Native_Scheduler.sleep;
+var _elm_lang$core$Process$spawn = _elm_lang$core$Native_Scheduler.spawn;
+
+var _elm_lang$dom$Native_Dom = function() {
+
+var fakeNode = {
+	addEventListener: function() {},
+	removeEventListener: function() {}
 };
-var _elm_lang$core$Tuple$first = function (_p6) {
-	var _p7 = _p6;
-	return _p7._0;
+
+var onDocument = on(typeof document !== 'undefined' ? document : fakeNode);
+var onWindow = on(typeof window !== 'undefined' ? window : fakeNode);
+
+function on(node)
+{
+	return function(eventName, decoder, toTask)
+	{
+		return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback) {
+
+			function performTask(event)
+			{
+				var result = A2(_elm_lang$core$Json_Decode$decodeValue, decoder, event);
+				if (result.ctor === 'Ok')
+				{
+					_elm_lang$core$Native_Scheduler.rawSpawn(toTask(result._0));
+				}
+			}
+
+			node.addEventListener(eventName, performTask);
+
+			return function()
+			{
+				node.removeEventListener(eventName, performTask);
+			};
+		});
+	};
+}
+
+var rAF = typeof requestAnimationFrame !== 'undefined'
+	? requestAnimationFrame
+	: function(callback) { callback(); };
+
+function withNode(id, doStuff)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		rAF(function()
+		{
+			var node = document.getElementById(id);
+			if (node === null)
+			{
+				callback(_elm_lang$core$Native_Scheduler.fail({ ctor: 'NotFound', _0: id }));
+				return;
+			}
+			callback(_elm_lang$core$Native_Scheduler.succeed(doStuff(node)));
+		});
+	});
+}
+
+
+// FOCUS
+
+function focus(id)
+{
+	return withNode(id, function(node) {
+		node.focus();
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function blur(id)
+{
+	return withNode(id, function(node) {
+		node.blur();
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+
+// SCROLLING
+
+function getScrollTop(id)
+{
+	return withNode(id, function(node) {
+		return node.scrollTop;
+	});
+}
+
+function setScrollTop(id, desiredScrollTop)
+{
+	return withNode(id, function(node) {
+		node.scrollTop = desiredScrollTop;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function toBottom(id)
+{
+	return withNode(id, function(node) {
+		node.scrollTop = node.scrollHeight;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function getScrollLeft(id)
+{
+	return withNode(id, function(node) {
+		return node.scrollLeft;
+	});
+}
+
+function setScrollLeft(id, desiredScrollLeft)
+{
+	return withNode(id, function(node) {
+		node.scrollLeft = desiredScrollLeft;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+function toRight(id)
+{
+	return withNode(id, function(node) {
+		node.scrollLeft = node.scrollWidth;
+		return _elm_lang$core$Native_Utils.Tuple0;
+	});
+}
+
+
+// SIZE
+
+function width(options, id)
+{
+	return withNode(id, function(node) {
+		switch (options.ctor)
+		{
+			case 'Content':
+				return node.scrollWidth;
+			case 'VisibleContent':
+				return node.clientWidth;
+			case 'VisibleContentWithBorders':
+				return node.offsetWidth;
+			case 'VisibleContentWithBordersAndMargins':
+				var rect = node.getBoundingClientRect();
+				return rect.right - rect.left;
+		}
+	});
+}
+
+function height(options, id)
+{
+	return withNode(id, function(node) {
+		switch (options.ctor)
+		{
+			case 'Content':
+				return node.scrollHeight;
+			case 'VisibleContent':
+				return node.clientHeight;
+			case 'VisibleContentWithBorders':
+				return node.offsetHeight;
+			case 'VisibleContentWithBordersAndMargins':
+				var rect = node.getBoundingClientRect();
+				return rect.bottom - rect.top;
+		}
+	});
+}
+
+return {
+	onDocument: F3(onDocument),
+	onWindow: F3(onWindow),
+
+	focus: focus,
+	blur: blur,
+
+	getScrollTop: getScrollTop,
+	setScrollTop: F2(setScrollTop),
+	getScrollLeft: getScrollLeft,
+	setScrollLeft: F2(setScrollLeft),
+	toBottom: toBottom,
+	toRight: toRight,
+
+	height: F2(height),
+	width: F2(width)
 };
+
+}();
+
+var _elm_lang$dom$Dom_LowLevel$onWindow = _elm_lang$dom$Native_Dom.onWindow;
+var _elm_lang$dom$Dom_LowLevel$onDocument = _elm_lang$dom$Native_Dom.onDocument;
 
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrap;
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags;
@@ -8260,6 +9613,408 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _elm_lang$navigation$Native_Navigation = function() {
+
+
+// FAKE NAVIGATION
+
+function go(n)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		if (n !== 0)
+		{
+			history.go(n);
+		}
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function pushState(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		history.pushState({}, '', url);
+		callback(_elm_lang$core$Native_Scheduler.succeed(getLocation()));
+	});
+}
+
+function replaceState(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		history.replaceState({}, '', url);
+		callback(_elm_lang$core$Native_Scheduler.succeed(getLocation()));
+	});
+}
+
+
+// REAL NAVIGATION
+
+function reloadPage(skipCache)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		document.location.reload(skipCache);
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+function setLocation(url)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		try
+		{
+			window.location = url;
+		}
+		catch(err)
+		{
+			// Only Firefox can throw a NS_ERROR_MALFORMED_URI exception here.
+			// Other browsers reload the page, so let's be consistent about that.
+			document.location.reload(false);
+		}
+		callback(_elm_lang$core$Native_Scheduler.succeed(_elm_lang$core$Native_Utils.Tuple0));
+	});
+}
+
+
+// GET LOCATION
+
+function getLocation()
+{
+	var location = document.location;
+
+	return {
+		href: location.href,
+		host: location.host,
+		hostname: location.hostname,
+		protocol: location.protocol,
+		origin: location.origin,
+		port_: location.port,
+		pathname: location.pathname,
+		search: location.search,
+		hash: location.hash,
+		username: location.username,
+		password: location.password
+	};
+}
+
+
+// DETECT IE11 PROBLEMS
+
+function isInternetExplorer11()
+{
+	return window.navigator.userAgent.indexOf('Trident') !== -1;
+}
+
+
+return {
+	go: go,
+	setLocation: setLocation,
+	reloadPage: reloadPage,
+	pushState: pushState,
+	replaceState: replaceState,
+	getLocation: getLocation,
+	isInternetExplorer11: isInternetExplorer11
+};
+
+}();
+
+var _elm_lang$navigation$Navigation$replaceState = _elm_lang$navigation$Native_Navigation.replaceState;
+var _elm_lang$navigation$Navigation$pushState = _elm_lang$navigation$Native_Navigation.pushState;
+var _elm_lang$navigation$Navigation$go = _elm_lang$navigation$Native_Navigation.go;
+var _elm_lang$navigation$Navigation$reloadPage = _elm_lang$navigation$Native_Navigation.reloadPage;
+var _elm_lang$navigation$Navigation$setLocation = _elm_lang$navigation$Native_Navigation.setLocation;
+var _elm_lang$navigation$Navigation_ops = _elm_lang$navigation$Navigation_ops || {};
+_elm_lang$navigation$Navigation_ops['&>'] = F2(
+	function (task1, task2) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (_p0) {
+				return task2;
+			},
+			task1);
+	});
+var _elm_lang$navigation$Navigation$notify = F3(
+	function (router, subs, location) {
+		var send = function (_p1) {
+			var _p2 = _p1;
+			return A2(
+				_elm_lang$core$Platform$sendToApp,
+				router,
+				_p2._0(location));
+		};
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Task$sequence(
+				A2(_elm_lang$core$List$map, send, subs)),
+			_elm_lang$core$Task$succeed(
+				{ctor: '_Tuple0'}));
+	});
+var _elm_lang$navigation$Navigation$cmdHelp = F3(
+	function (router, subs, cmd) {
+		var _p3 = cmd;
+		switch (_p3.ctor) {
+			case 'Jump':
+				return _elm_lang$navigation$Navigation$go(_p3._0);
+			case 'New':
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A2(_elm_lang$navigation$Navigation$notify, router, subs),
+					_elm_lang$navigation$Navigation$pushState(_p3._0));
+			case 'Modify':
+				return A2(
+					_elm_lang$core$Task$andThen,
+					A2(_elm_lang$navigation$Navigation$notify, router, subs),
+					_elm_lang$navigation$Navigation$replaceState(_p3._0));
+			case 'Visit':
+				return _elm_lang$navigation$Navigation$setLocation(_p3._0);
+			default:
+				return _elm_lang$navigation$Navigation$reloadPage(_p3._0);
+		}
+	});
+var _elm_lang$navigation$Navigation$killPopWatcher = function (popWatcher) {
+	var _p4 = popWatcher;
+	if (_p4.ctor === 'Normal') {
+		return _elm_lang$core$Process$kill(_p4._0);
+	} else {
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Process$kill(_p4._0),
+			_elm_lang$core$Process$kill(_p4._1));
+	}
+};
+var _elm_lang$navigation$Navigation$onSelfMsg = F3(
+	function (router, location, state) {
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			A3(_elm_lang$navigation$Navigation$notify, router, state.subs, location),
+			_elm_lang$core$Task$succeed(state));
+	});
+var _elm_lang$navigation$Navigation$subscription = _elm_lang$core$Native_Platform.leaf('Navigation');
+var _elm_lang$navigation$Navigation$command = _elm_lang$core$Native_Platform.leaf('Navigation');
+var _elm_lang$navigation$Navigation$Location = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {href: a, host: b, hostname: c, protocol: d, origin: e, port_: f, pathname: g, search: h, hash: i, username: j, password: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _elm_lang$navigation$Navigation$State = F2(
+	function (a, b) {
+		return {subs: a, popWatcher: b};
+	});
+var _elm_lang$navigation$Navigation$init = _elm_lang$core$Task$succeed(
+	A2(
+		_elm_lang$navigation$Navigation$State,
+		{ctor: '[]'},
+		_elm_lang$core$Maybe$Nothing));
+var _elm_lang$navigation$Navigation$Reload = function (a) {
+	return {ctor: 'Reload', _0: a};
+};
+var _elm_lang$navigation$Navigation$reload = _elm_lang$navigation$Navigation$command(
+	_elm_lang$navigation$Navigation$Reload(false));
+var _elm_lang$navigation$Navigation$reloadAndSkipCache = _elm_lang$navigation$Navigation$command(
+	_elm_lang$navigation$Navigation$Reload(true));
+var _elm_lang$navigation$Navigation$Visit = function (a) {
+	return {ctor: 'Visit', _0: a};
+};
+var _elm_lang$navigation$Navigation$load = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Visit(url));
+};
+var _elm_lang$navigation$Navigation$Modify = function (a) {
+	return {ctor: 'Modify', _0: a};
+};
+var _elm_lang$navigation$Navigation$modifyUrl = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Modify(url));
+};
+var _elm_lang$navigation$Navigation$New = function (a) {
+	return {ctor: 'New', _0: a};
+};
+var _elm_lang$navigation$Navigation$newUrl = function (url) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$New(url));
+};
+var _elm_lang$navigation$Navigation$Jump = function (a) {
+	return {ctor: 'Jump', _0: a};
+};
+var _elm_lang$navigation$Navigation$back = function (n) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Jump(0 - n));
+};
+var _elm_lang$navigation$Navigation$forward = function (n) {
+	return _elm_lang$navigation$Navigation$command(
+		_elm_lang$navigation$Navigation$Jump(n));
+};
+var _elm_lang$navigation$Navigation$cmdMap = F2(
+	function (_p5, myCmd) {
+		var _p6 = myCmd;
+		switch (_p6.ctor) {
+			case 'Jump':
+				return _elm_lang$navigation$Navigation$Jump(_p6._0);
+			case 'New':
+				return _elm_lang$navigation$Navigation$New(_p6._0);
+			case 'Modify':
+				return _elm_lang$navigation$Navigation$Modify(_p6._0);
+			case 'Visit':
+				return _elm_lang$navigation$Navigation$Visit(_p6._0);
+			default:
+				return _elm_lang$navigation$Navigation$Reload(_p6._0);
+		}
+	});
+var _elm_lang$navigation$Navigation$Monitor = function (a) {
+	return {ctor: 'Monitor', _0: a};
+};
+var _elm_lang$navigation$Navigation$program = F2(
+	function (locationToMessage, stuff) {
+		var init = stuff.init(
+			_elm_lang$navigation$Native_Navigation.getLocation(
+				{ctor: '_Tuple0'}));
+		var subs = function (model) {
+			return _elm_lang$core$Platform_Sub$batch(
+				{
+					ctor: '::',
+					_0: _elm_lang$navigation$Navigation$subscription(
+						_elm_lang$navigation$Navigation$Monitor(locationToMessage)),
+					_1: {
+						ctor: '::',
+						_0: stuff.subscriptions(model),
+						_1: {ctor: '[]'}
+					}
+				});
+		};
+		return _elm_lang$html$Html$program(
+			{init: init, view: stuff.view, update: stuff.update, subscriptions: subs});
+	});
+var _elm_lang$navigation$Navigation$programWithFlags = F2(
+	function (locationToMessage, stuff) {
+		var init = function (flags) {
+			return A2(
+				stuff.init,
+				flags,
+				_elm_lang$navigation$Native_Navigation.getLocation(
+					{ctor: '_Tuple0'}));
+		};
+		var subs = function (model) {
+			return _elm_lang$core$Platform_Sub$batch(
+				{
+					ctor: '::',
+					_0: _elm_lang$navigation$Navigation$subscription(
+						_elm_lang$navigation$Navigation$Monitor(locationToMessage)),
+					_1: {
+						ctor: '::',
+						_0: stuff.subscriptions(model),
+						_1: {ctor: '[]'}
+					}
+				});
+		};
+		return _elm_lang$html$Html$programWithFlags(
+			{init: init, view: stuff.view, update: stuff.update, subscriptions: subs});
+	});
+var _elm_lang$navigation$Navigation$subMap = F2(
+	function (func, _p7) {
+		var _p8 = _p7;
+		return _elm_lang$navigation$Navigation$Monitor(
+			function (_p9) {
+				return func(
+					_p8._0(_p9));
+			});
+	});
+var _elm_lang$navigation$Navigation$InternetExplorer = F2(
+	function (a, b) {
+		return {ctor: 'InternetExplorer', _0: a, _1: b};
+	});
+var _elm_lang$navigation$Navigation$Normal = function (a) {
+	return {ctor: 'Normal', _0: a};
+};
+var _elm_lang$navigation$Navigation$spawnPopWatcher = function (router) {
+	var reportLocation = function (_p10) {
+		return A2(
+			_elm_lang$core$Platform$sendToSelf,
+			router,
+			_elm_lang$navigation$Native_Navigation.getLocation(
+				{ctor: '_Tuple0'}));
+	};
+	return _elm_lang$navigation$Native_Navigation.isInternetExplorer11(
+		{ctor: '_Tuple0'}) ? A3(
+		_elm_lang$core$Task$map2,
+		_elm_lang$navigation$Navigation$InternetExplorer,
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'popstate', _elm_lang$core$Json_Decode$value, reportLocation)),
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'hashchange', _elm_lang$core$Json_Decode$value, reportLocation))) : A2(
+		_elm_lang$core$Task$map,
+		_elm_lang$navigation$Navigation$Normal,
+		_elm_lang$core$Process$spawn(
+			A3(_elm_lang$dom$Dom_LowLevel$onWindow, 'popstate', _elm_lang$core$Json_Decode$value, reportLocation)));
+};
+var _elm_lang$navigation$Navigation$onEffects = F4(
+	function (router, cmds, subs, _p11) {
+		var _p12 = _p11;
+		var _p15 = _p12.popWatcher;
+		var stepState = function () {
+			var _p13 = {ctor: '_Tuple2', _0: subs, _1: _p15};
+			_v6_2:
+			do {
+				if (_p13._0.ctor === '[]') {
+					if (_p13._1.ctor === 'Just') {
+						return A2(
+							_elm_lang$navigation$Navigation_ops['&>'],
+							_elm_lang$navigation$Navigation$killPopWatcher(_p13._1._0),
+							_elm_lang$core$Task$succeed(
+								A2(_elm_lang$navigation$Navigation$State, subs, _elm_lang$core$Maybe$Nothing)));
+					} else {
+						break _v6_2;
+					}
+				} else {
+					if (_p13._1.ctor === 'Nothing') {
+						return A2(
+							_elm_lang$core$Task$map,
+							function (_p14) {
+								return A2(
+									_elm_lang$navigation$Navigation$State,
+									subs,
+									_elm_lang$core$Maybe$Just(_p14));
+							},
+							_elm_lang$navigation$Navigation$spawnPopWatcher(router));
+					} else {
+						break _v6_2;
+					}
+				}
+			} while(false);
+			return _elm_lang$core$Task$succeed(
+				A2(_elm_lang$navigation$Navigation$State, subs, _p15));
+		}();
+		return A2(
+			_elm_lang$navigation$Navigation_ops['&>'],
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					A2(_elm_lang$navigation$Navigation$cmdHelp, router, subs),
+					cmds)),
+			stepState);
+	});
+_elm_lang$core$Native_Platform.effectManagers['Navigation'] = {pkg: 'elm-lang/navigation', init: _elm_lang$navigation$Navigation$init, onEffects: _elm_lang$navigation$Navigation$onEffects, onSelfMsg: _elm_lang$navigation$Navigation$onSelfMsg, tag: 'fx', cmdMap: _elm_lang$navigation$Navigation$cmdMap, subMap: _elm_lang$navigation$Navigation$subMap};
+
 var _elm_lang$svg$Svg$map = _elm_lang$virtual_dom$VirtualDom$map;
 var _elm_lang$svg$Svg$text = _elm_lang$virtual_dom$VirtualDom$text;
 var _elm_lang$svg$Svg$svgNamespace = A2(
@@ -8601,48 +10356,409 @@ var _elm_lang$svg$Svg_Attributes$accumulate = _elm_lang$virtual_dom$VirtualDom$a
 var _elm_lang$svg$Svg_Attributes$accelerate = _elm_lang$virtual_dom$VirtualDom$attribute('accelerate');
 var _elm_lang$svg$Svg_Attributes$accentHeight = _elm_lang$virtual_dom$VirtualDom$attribute('accent-height');
 
-var _user$project$Messages$SelectForm = function (a) {
+var _user$project$ChordBrowser_Messages$SelectForm = function (a) {
 	return {ctor: 'SelectForm', _0: a};
 };
-var _user$project$Messages$SelectChord = function (a) {
+var _user$project$ChordBrowser_Messages$SelectChord = function (a) {
 	return {ctor: 'SelectChord', _0: a};
 };
-var _user$project$Messages$NoOp = {ctor: 'NoOp'};
 
-var _user$project$Chords_Types$Note = F4(
+var _user$project$ChordFlashcards_Messages$ClearKeys = {ctor: 'ClearKeys'};
+var _user$project$ChordFlashcards_Messages$ClearForms = {ctor: 'ClearForms'};
+var _user$project$ChordFlashcards_Messages$ClearChords = {ctor: 'ClearChords'};
+var _user$project$ChordFlashcards_Messages$ResetTimer = {ctor: 'ResetTimer'};
+var _user$project$ChordFlashcards_Messages$StartTimer = {ctor: 'StartTimer'};
+var _user$project$ChordFlashcards_Messages$StopTimer = {ctor: 'StopTimer'};
+var _user$project$ChordFlashcards_Messages$NewCardData = function (a) {
+	return {ctor: 'NewCardData', _0: a};
+};
+var _user$project$ChordFlashcards_Messages$KeyToggle = function (a) {
+	return {ctor: 'KeyToggle', _0: a};
+};
+var _user$project$ChordFlashcards_Messages$FormToggle = function (a) {
+	return {ctor: 'FormToggle', _0: a};
+};
+var _user$project$ChordFlashcards_Messages$ChordToggle = function (a) {
+	return {ctor: 'ChordToggle', _0: a};
+};
+var _user$project$ChordFlashcards_Messages$TimerTick = function (a) {
+	return {ctor: 'TimerTick', _0: a};
+};
+
+var _user$project$App_Messages$FlashcardsMsg = function (a) {
+	return {ctor: 'FlashcardsMsg', _0: a};
+};
+var _user$project$App_Messages$BrowserMsg = function (a) {
+	return {ctor: 'BrowserMsg', _0: a};
+};
+var _user$project$App_Messages$UrlChange = function (a) {
+	return {ctor: 'UrlChange', _0: a};
+};
+var _user$project$App_Messages$NoOp = {ctor: 'NoOp'};
+
+var _user$project$ChordBrowser_Model$init = {selectedChord: 'Major', selectedForm: 'II', selectedKey: 'G'};
+var _user$project$ChordBrowser_Model$Model = F3(
+	function (a, b, c) {
+		return {selectedChord: a, selectedForm: b, selectedKey: c};
+	});
+
+var _user$project$ChordFlashcards_Model$Model = function (a) {
+	return function (b) {
+		return function (c) {
+			return function (d) {
+				return function (e) {
+					return function (f) {
+						return function (g) {
+							return function (h) {
+								return function (i) {
+									return function (j) {
+										return function (k) {
+											return {currentChord: a, currentForm: b, currentKey: c, selectedChords: d, selectedForms: e, selectedKeys: f, chordsToShow: g, timerRunning: h, timerTick: i, showForSeconds: j, cardState: k};
+										};
+									};
+								};
+							};
+						};
+					};
+				};
+			};
+		};
+	};
+};
+var _user$project$ChordFlashcards_Model$Diagram = {ctor: 'Diagram'};
+var _user$project$ChordFlashcards_Model$ChordName = {ctor: 'ChordName'};
+var _user$project$ChordFlashcards_Model$init = {
+	currentChord: _elm_lang$core$Maybe$Nothing,
+	currentForm: _elm_lang$core$Maybe$Nothing,
+	currentKey: _elm_lang$core$Maybe$Nothing,
+	selectedChords: {ctor: '[]'},
+	selectedForms: {ctor: '[]'},
+	selectedKeys: {ctor: '[]'},
+	chordsToShow: {ctor: '[]'},
+	timerRunning: false,
+	timerTick: 0,
+	showForSeconds: 5,
+	cardState: _user$project$ChordFlashcards_Model$ChordName
+};
+
+var _user$project$App_Model$Model = F3(
+	function (a, b, c) {
+		return {page: a, browser: b, flashcards: c};
+	});
+var _user$project$App_Model$FlashcardPage = {ctor: 'FlashcardPage'};
+var _user$project$App_Model$BrowsePage = {ctor: 'BrowsePage'};
+var _user$project$App_Model$pageFromHash = function (hash) {
+	var _p0 = hash;
+	switch (_p0) {
+		case '#flashcards':
+			return _user$project$App_Model$FlashcardPage;
+		case '#browse':
+			return _user$project$App_Model$BrowsePage;
+		default:
+			return _user$project$App_Model$BrowsePage;
+	}
+};
+var _user$project$App_Model$initialModel = function (locationHash) {
+	return {
+		page: _user$project$App_Model$pageFromHash(locationHash),
+		browser: _user$project$ChordBrowser_Model$init,
+		flashcards: _user$project$ChordFlashcards_Model$init
+	};
+};
+var _user$project$App_Model$init = function (location) {
+	return {
+		ctor: '_Tuple2',
+		_0: _user$project$App_Model$initialModel(location.hash),
+		_1: _elm_lang$core$Platform_Cmd$none
+	};
+};
+
+var _user$project$ChordFlashcards_Subscriptions$subscriptions = function (model) {
+	return model.timerRunning ? A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _user$project$ChordFlashcards_Messages$TimerTick) : _elm_lang$core$Platform_Sub$none;
+};
+
+var _user$project$App_Subscriptions$subscriptions = function (model) {
+	var timerSub = _user$project$ChordFlashcards_Subscriptions$subscriptions(model.flashcards);
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: A2(_elm_lang$core$Platform_Sub$map, _user$project$App_Messages$FlashcardsMsg, timerSub),
+			_1: {ctor: '[]'}
+		});
+};
+
+var _user$project$ChordBrowser_Update$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'SelectChord') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{selectedChord: _p0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{selectedForm: _p0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+
+var _user$project$ChordFlashcards_Update$grabChord = function (currentChords) {
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Maybe$Nothing,
+		_1: {ctor: '[]'}
+	};
+};
+var _user$project$ChordFlashcards_Update$addOrRemove = F2(
+	function (val, list) {
+		return A2(_elm_lang$core$List$member, val, list) ? A2(
+			_elm_lang$core$List$filter,
+			function (a) {
+				return !_elm_lang$core$Native_Utils.eq(a, val);
+			},
+			list) : {ctor: '::', _0: val, _1: list};
+	});
+var _user$project$ChordFlashcards_Update$chooseGenerator = function (list) {
+	return _elm_community$random_extra$Random_List$choose(list);
+};
+var _user$project$ChordFlashcards_Update$choosePairGenerator = F2(
+	function (chordList, formList) {
+		return A2(
+			_elm_lang$core$Random$pair,
+			_user$project$ChordFlashcards_Update$chooseGenerator(chordList),
+			_user$project$ChordFlashcards_Update$chooseGenerator(formList));
+	});
+var _user$project$ChordFlashcards_Update$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'StartTimer':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{chordsToShow: model.selectedChords}),
+					_1: A2(
+						_elm_lang$core$Random$generate,
+						_user$project$ChordFlashcards_Messages$NewCardData,
+						A2(_user$project$ChordFlashcards_Update$choosePairGenerator, model.selectedChords, model.selectedForms))
+				};
+			case 'StopTimer':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{timerRunning: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ResetTimer':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{timerRunning: false, timerTick: 0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'KeyToggle':
+				var newList = A2(_user$project$ChordFlashcards_Update$addOrRemove, _p0._0, model.selectedKeys);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedKeys: newList}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FormToggle':
+				var newList = A2(_user$project$ChordFlashcards_Update$addOrRemove, _p0._0, model.selectedForms);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedForms: newList}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ChordToggle':
+				var newList = A2(_user$project$ChordFlashcards_Update$addOrRemove, _p0._0, model.selectedChords);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedChords: newList}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ClearChords':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							selectedChords: {ctor: '[]'}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ClearForms':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							selectedForms: {ctor: '[]'}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ClearKeys':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							selectedKeys: {ctor: '[]'}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'NewCardData':
+				var _p1 = _p0._0;
+				var chordData = _p1._0;
+				var formData = _p1._1;
+				var _p2 = chordData;
+				var newChord = _p2._0;
+				var remainingChords = _p2._1;
+				var _p3 = formData;
+				var newForm = _p3._0;
+				var _p4 = newChord;
+				if (_p4.ctor === 'Nothing') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{timerTick: 0, timerRunning: false, cardState: _user$project$ChordFlashcards_Model$ChordName}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{timerTick: 0, timerRunning: true, cardState: _user$project$ChordFlashcards_Model$ChordName, currentForm: newForm, currentChord: newChord, chordsToShow: remainingChords}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			default:
+				if (_elm_lang$core$Native_Utils.cmp(model.timerTick, model.showForSeconds) > 0) {
+					var _p5 = model.cardState;
+					if (_p5.ctor === 'Diagram') {
+						return {
+							ctor: '_Tuple2',
+							_0: model,
+							_1: A2(
+								_elm_lang$core$Random$generate,
+								_user$project$ChordFlashcards_Messages$NewCardData,
+								A2(_user$project$ChordFlashcards_Update$choosePairGenerator, model.chordsToShow, model.selectedForms))
+						};
+					} else {
+						return {
+							ctor: '_Tuple2',
+							_0: _elm_lang$core$Native_Utils.update(
+								model,
+								{cardState: _user$project$ChordFlashcards_Model$Diagram, timerTick: 0}),
+							_1: _elm_lang$core$Platform_Cmd$none
+						};
+					}
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{timerTick: model.timerTick + 1}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+		}
+	});
+
+var _user$project$App_Update$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'NoOp':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'UrlChange':
+				var _p1 = A2(_user$project$ChordFlashcards_Update$update, _user$project$ChordFlashcards_Messages$StopTimer, model.flashcards);
+				var newFlashcards = _p1._0;
+				var newPage = _user$project$App_Model$pageFromHash(_p0._0.hash);
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{page: newPage, flashcards: newFlashcards}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'BrowserMsg':
+				var _p2 = A2(_user$project$ChordBrowser_Update$update, _p0._0, model.browser);
+				var browserModel = _p2._0;
+				var browserCmd = _p2._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{browser: browserModel}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$App_Messages$BrowserMsg, browserCmd)
+				};
+			default:
+				var _p3 = A2(_user$project$ChordFlashcards_Update$update, _p0._0, model.flashcards);
+				var flashcardModel = _p3._0;
+				var flashcardCmd = _p3._1;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{flashcards: flashcardModel}),
+					_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$App_Messages$FlashcardsMsg, flashcardCmd)
+				};
+		}
+	});
+
+var _user$project$ChordDiagrams_Types$Note = F4(
 	function (a, b, c, d) {
 		return {string: a, fret: b, finger: c, rootNote: d};
 	});
-var _user$project$Chords_Types$Barre = F5(
+var _user$project$ChordDiagrams_Types$Barre = F5(
 	function (a, b, c, d, e) {
 		return {startString: a, endString: b, fret: c, rootString: d, finger: e};
 	});
-var _user$project$Chords_Types$Ghost = function (a) {
+var _user$project$ChordDiagrams_Types$Ghost = function (a) {
 	return {ctor: 'Ghost', _0: a};
 };
-var _user$project$Chords_Types$ghostNote = F2(
+var _user$project$ChordDiagrams_Types$ghostNote = F2(
 	function (string, fret) {
-		return _user$project$Chords_Types$Ghost(
-			A4(_user$project$Chords_Types$Note, string, fret, 0, true));
+		return _user$project$ChordDiagrams_Types$Ghost(
+			A4(_user$project$ChordDiagrams_Types$Note, string, fret, 0, true));
 	});
-var _user$project$Chords_Types$Barred = function (a) {
+var _user$project$ChordDiagrams_Types$Barred = function (a) {
 	return {ctor: 'Barred', _0: a};
 };
-var _user$project$Chords_Types$Single = function (a) {
+var _user$project$ChordDiagrams_Types$Single = function (a) {
 	return {ctor: 'Single', _0: a};
 };
-var _user$project$Chords_Types$rootNote = F3(
+var _user$project$ChordDiagrams_Types$rootNote = F3(
 	function (string, fret, finger) {
-		return _user$project$Chords_Types$Single(
-			A4(_user$project$Chords_Types$Note, string, fret, finger, true));
+		return _user$project$ChordDiagrams_Types$Single(
+			A4(_user$project$ChordDiagrams_Types$Note, string, fret, finger, true));
 	});
-var _user$project$Chords_Types$plainNote = F3(
+var _user$project$ChordDiagrams_Types$plainNote = F3(
 	function (string, fret, finger) {
-		return _user$project$Chords_Types$Single(
-			A4(_user$project$Chords_Types$Note, string, fret, finger, false));
+		return _user$project$ChordDiagrams_Types$Single(
+			A4(_user$project$ChordDiagrams_Types$Note, string, fret, finger, false));
 	});
 
-var _user$project$Chords_FormI$formI = function (chordName) {
+var _user$project$ChordDiagrams_FormI$formI = function (chordName) {
 	var _p0 = chordName;
 	switch (_p0) {
 		case 'Major':
@@ -8650,9 +10766,9 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							0,
 							5,
 							2,
@@ -8660,13 +10776,13 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8679,16 +10795,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8701,16 +10817,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 3),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 3),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8723,16 +10839,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 1, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8745,9 +10861,9 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							0,
 							5,
 							2,
@@ -8755,10 +10871,10 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 4),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -8770,9 +10886,9 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							0,
 							5,
 							2,
@@ -8780,10 +10896,10 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -8795,11 +10911,11 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 2, 2),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -8810,14 +10926,14 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 3, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 3, 5, 2, _elm_lang$core$Maybe$Nothing, 3)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 1, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 2, 2),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -8829,14 +10945,14 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -8848,17 +10964,17 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8871,19 +10987,19 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 1, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 1, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 3),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -8897,19 +11013,19 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 3),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -8923,16 +11039,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -8945,19 +11061,19 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 1, 1),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 0, 3),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 3),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -8971,14 +11087,14 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 2, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 2, 1),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Chords_Types$Barred(
-								A5(_user$project$Chords_Types$Barre, 2, 5, 3, _elm_lang$core$Maybe$Nothing, 3)),
+							_0: _user$project$ChordDiagrams_Types$Barred(
+								A5(_user$project$ChordDiagrams_Types$Barre, 2, 5, 3, _elm_lang$core$Maybe$Nothing, 3)),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -8990,16 +11106,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9012,16 +11128,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9034,16 +11150,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9056,11 +11172,11 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 1),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 2)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 2)),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -9071,16 +11187,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9093,9 +11209,9 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							0,
 							5,
 							2,
@@ -9103,10 +11219,10 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9118,16 +11234,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 4, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 4, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9140,9 +11256,9 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							0,
 							5,
 							2,
@@ -9150,10 +11266,10 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 0, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9165,14 +11281,14 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 1, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$rootNote, 0, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9184,16 +11300,16 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9206,19 +11322,19 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A2(_user$project$Chords_Types$ghostNote, 0, 2),
+					_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 1),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 								_1: {
 									ctor: '::',
-									_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+									_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -9232,19 +11348,19 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A2(_user$project$Chords_Types$ghostNote, 0, 1),
+					_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 0, 4, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 4, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 1, 1),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 								_1: {
 									ctor: '::',
-									_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+									_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -9262,7 +11378,7 @@ var _user$project$Chords_FormI$formI = function (chordName) {
 	}
 };
 
-var _user$project$Chords_FormII$formII = function (chordName) {
+var _user$project$ChordDiagrams_FormII$formII = function (chordName) {
 	var _p0 = chordName;
 	switch (_p0) {
 		case 'Major':
@@ -9270,9 +11386,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							2,
@@ -9280,8 +11396,8 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 3)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 2, 4, 4, _elm_lang$core$Maybe$Nothing, 3)),
 						_1: {ctor: '[]'}
 					}
 				},
@@ -9292,16 +11408,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9314,9 +11430,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							2,
@@ -9324,10 +11440,10 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9336,16 +11452,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 					ctor: '::',
 					_0: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 								_1: {
 									ctor: '::',
-									_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+									_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 1, 1),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -9359,16 +11475,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 1, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9381,9 +11497,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							2,
@@ -9391,13 +11507,13 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9410,9 +11526,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							2,
@@ -9420,13 +11536,13 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9439,9 +11555,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							2,
@@ -9449,10 +11565,10 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9464,16 +11580,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 1, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9486,17 +11602,17 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 2, 3, 2, _elm_lang$core$Maybe$Nothing, 1)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 2, 3, 2, _elm_lang$core$Maybe$Nothing, 1)),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 5, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 5, 3, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9509,16 +11625,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9531,16 +11647,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 1, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 1, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9553,14 +11669,14 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 3, 4, 3, _elm_lang$core$Maybe$Nothing, 3)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 3, 4, 3, _elm_lang$core$Maybe$Nothing, 3)),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 1),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9572,16 +11688,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 1, 1),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9594,16 +11710,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9616,16 +11732,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 2, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 2, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9638,9 +11754,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							2,
@@ -9648,10 +11764,10 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 3),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9663,9 +11779,9 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
+					_0: _user$project$ChordDiagrams_Types$Barred(
 						A5(
-							_user$project$Chords_Types$Barre,
+							_user$project$ChordDiagrams_Types$Barre,
 							1,
 							5,
 							1,
@@ -9673,10 +11789,10 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 							1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9688,16 +11804,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9710,16 +11826,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 1, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 1, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9732,16 +11848,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9754,19 +11870,19 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 1, 1),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 1, 3),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 1, 3),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -9780,19 +11896,19 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 1, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 1, 1),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 1, 3),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 1, 3),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -9806,16 +11922,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 5, 1, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 5, 1, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9828,17 +11944,17 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 3, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 3, 2),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 1)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 2, 5, 2, _elm_lang$core$Maybe$Nothing, 1)),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9851,14 +11967,14 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 4)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 4)),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9870,17 +11986,17 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 2),
 					_1: {
 						ctor: '::',
-						_0: _user$project$Chords_Types$Barred(
-							A5(_user$project$Chords_Types$Barre, 2, 4, 1, _elm_lang$core$Maybe$Nothing, 1)),
+						_0: _user$project$ChordDiagrams_Types$Barred(
+							A5(_user$project$ChordDiagrams_Types$Barre, 2, 4, 1, _elm_lang$core$Maybe$Nothing, 1)),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 5, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9893,16 +12009,16 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 1, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 1, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 3, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 3, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 5, 4, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9919,7 +12035,7 @@ var _user$project$Chords_FormII$formII = function (chordName) {
 	}
 };
 
-var _user$project$Chords_FormIII$formIII = function (chordName) {
+var _user$project$ChordDiagrams_FormIII$formIII = function (chordName) {
 	var _p0 = chordName;
 	switch (_p0) {
 		case 'Major':
@@ -9927,14 +12043,14 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 3, 4, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 2, 3, 4, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -9946,16 +12062,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9968,16 +12084,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -9990,16 +12106,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 1, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10012,14 +12128,14 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 2, 3, 4, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 2, 3, 4, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 5, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -10031,16 +12147,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 5, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10053,16 +12169,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 5, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10075,16 +12191,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 3, 1, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 1, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 5, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10097,19 +12213,19 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 1),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 2),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 2),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 4),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 4),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 7),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -10123,17 +12239,17 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: _user$project$Chords_Types$Barred(
-						A5(_user$project$Chords_Types$Barre, 3, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
+					_0: _user$project$ChordDiagrams_Types$Barred(
+						A5(_user$project$ChordDiagrams_Types$Barre, 3, 4, 2, _elm_lang$core$Maybe$Nothing, 1)),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 4, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 4, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 5, 4),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+								_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 7),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10146,19 +12262,19 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 6, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 6, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 2, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 2, 1),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 7),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -10172,16 +12288,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 6, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 6, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10194,16 +12310,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 5, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 5, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10216,16 +12332,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 7, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 7, 4),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10238,16 +12354,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 3, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 4, 6, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 6, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 5, 4, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 5, 4, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10260,19 +12376,19 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 5, 4),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 5, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 1),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 1),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 4, 3),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 4, 3),
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+									_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 7),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -10286,17 +12402,17 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$plainNote, 0, 5, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$plainNote, 0, 5, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 5, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 5, 3),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Chords_Types$Barred(
-								A5(_user$project$Chords_Types$Barre, 3, 4, 4, _elm_lang$core$Maybe$Nothing, 1)),
+							_0: _user$project$ChordDiagrams_Types$Barred(
+								A5(_user$project$ChordDiagrams_Types$Barre, 3, 4, 4, _elm_lang$core$Maybe$Nothing, 1)),
 							_1: {
 								ctor: '::',
-								_0: A2(_user$project$Chords_Types$ghostNote, 0, 7),
+								_0: A2(_user$project$ChordDiagrams_Types$ghostNote, 0, 7),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10309,16 +12425,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 5, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 5, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 3, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 3, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10331,14 +12447,14 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 6, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 6, 3),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Chords_Types$Barred(
-								A5(_user$project$Chords_Types$Barre, 2, 3, 3, _elm_lang$core$Maybe$Nothing, 1)),
+							_0: _user$project$ChordDiagrams_Types$Barred(
+								A5(_user$project$ChordDiagrams_Types$Barre, 2, 3, 3, _elm_lang$core$Maybe$Nothing, 1)),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -10350,16 +12466,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 4),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 4),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 1, 5, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 1, 5, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 2, 3, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 3, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 3, 2, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 2, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10372,16 +12488,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 1),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 5, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 5, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10394,16 +12510,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 4, 1),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 4, 1),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 5, 2),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 5, 2),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10416,16 +12532,16 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 6, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 6, 2),
 							_1: {
 								ctor: '::',
-								_0: A3(_user$project$Chords_Types$plainNote, 4, 5, 1),
+								_0: A3(_user$project$ChordDiagrams_Types$plainNote, 4, 5, 1),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10438,14 +12554,14 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Chords_Types$Barred(
-								A5(_user$project$Chords_Types$Barre, 1, 4, 6, _elm_lang$core$Maybe$Nothing, 1)),
+							_0: _user$project$ChordDiagrams_Types$Barred(
+								A5(_user$project$ChordDiagrams_Types$Barre, 1, 4, 6, _elm_lang$core$Maybe$Nothing, 1)),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -10457,14 +12573,14 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: _user$project$Chords_Types$Barred(
-								A5(_user$project$Chords_Types$Barre, 3, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
+							_0: _user$project$ChordDiagrams_Types$Barred(
+								A5(_user$project$ChordDiagrams_Types$Barre, 3, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
 							_1: {ctor: '[]'}
 						}
 					}
@@ -10476,17 +12592,17 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 3),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 3),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 4),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 4),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 5, 2),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 5, 2),
 							_1: {
 								ctor: '::',
-								_0: _user$project$Chords_Types$Barred(
-									A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
+								_0: _user$project$ChordDiagrams_Types$Barred(
+									A5(_user$project$ChordDiagrams_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10499,17 +12615,17 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 				ctor: '::',
 				_0: {
 					ctor: '::',
-					_0: A3(_user$project$Chords_Types$rootNote, 0, 7, 2),
+					_0: A3(_user$project$ChordDiagrams_Types$rootNote, 0, 7, 2),
 					_1: {
 						ctor: '::',
-						_0: A3(_user$project$Chords_Types$plainNote, 2, 7, 3),
+						_0: A3(_user$project$ChordDiagrams_Types$plainNote, 2, 7, 3),
 						_1: {
 							ctor: '::',
-							_0: A3(_user$project$Chords_Types$plainNote, 3, 7, 4),
+							_0: A3(_user$project$ChordDiagrams_Types$plainNote, 3, 7, 4),
 							_1: {
 								ctor: '::',
-								_0: _user$project$Chords_Types$Barred(
-									A5(_user$project$Chords_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
+								_0: _user$project$ChordDiagrams_Types$Barred(
+									A5(_user$project$ChordDiagrams_Types$Barre, 4, 5, 4, _elm_lang$core$Maybe$Nothing, 1)),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10526,7 +12642,7 @@ var _user$project$Chords_FormIII$formIII = function (chordName) {
 	}
 };
 
-var _user$project$Chords_Views$chordInfo = F2(
+var _user$project$ChordDiagrams_View$chordInfo = F2(
 	function (chordForm, chordName) {
 		return A2(
 			_elm_lang$core$Basics_ops['++'],
@@ -10536,7 +12652,7 @@ var _user$project$Chords_Views$chordInfo = F2(
 				chordForm,
 				A2(_elm_lang$core$Basics_ops['++'], ' : ', chordName)));
 	});
-var _user$project$Chords_Views$hasNote = F2(
+var _user$project$ChordDiagrams_View$hasNote = F2(
 	function (string, fingering) {
 		var _p0 = fingering;
 		switch (_p0.ctor) {
@@ -10549,47 +12665,47 @@ var _user$project$Chords_Views$hasNote = F2(
 				return false;
 		}
 	});
-var _user$project$Chords_Views$hasNotes = F2(
+var _user$project$ChordDiagrams_View$hasNotes = F2(
 	function (stringNum, fingerngs) {
-		var check = _user$project$Chords_Views$hasNote(stringNum);
+		var check = _user$project$ChordDiagrams_View$hasNote(stringNum);
 		return A2(_elm_lang$core$List$any, check, fingerngs);
 	});
-var _user$project$Chords_Views$chordData = F2(
+var _user$project$ChordDiagrams_View$chordData = F2(
 	function (chordForm, chordName) {
 		var _p2 = chordForm;
 		switch (_p2) {
 			case 'I':
-				return _user$project$Chords_FormI$formI(chordName);
+				return _user$project$ChordDiagrams_FormI$formI(chordName);
 			case 'II':
-				return _user$project$Chords_FormII$formII(chordName);
+				return _user$project$ChordDiagrams_FormII$formII(chordName);
 			case 'III':
-				return _user$project$Chords_FormIII$formIII(chordName);
+				return _user$project$ChordDiagrams_FormIII$formIII(chordName);
 			default:
-				return _user$project$Chords_FormI$formI(chordName);
+				return _user$project$ChordDiagrams_FormI$formI(chordName);
 		}
 	});
-var _user$project$Chords_Views$blackColor = '#333333';
-var _user$project$Chords_Views$rootColor = '#259577';
-var _user$project$Chords_Views$muteColor = '#d5939b';
-var _user$project$Chords_Views$string_stroke = '2';
-var _user$project$Chords_Views$fret_stroke = '4';
-var _user$project$Chords_Views$num_strings = 6;
-var _user$project$Chords_Views$num_frets = 7;
-var _user$project$Chords_Views$string_space = 32;
-var _user$project$Chords_Views$fret_length = (_user$project$Chords_Views$num_strings - 1) * _user$project$Chords_Views$string_space;
-var _user$project$Chords_Views$fret_length_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$fret_length);
-var _user$project$Chords_Views$fret_space = 45;
-var _user$project$Chords_Views$string_length = _user$project$Chords_Views$num_frets * _user$project$Chords_Views$fret_space;
-var _user$project$Chords_Views$string_length_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$string_length);
-var _user$project$Chords_Views$fretY = function (fret) {
-	return _elm_lang$core$Basics$toString(fret * _user$project$Chords_Views$fret_space);
+var _user$project$ChordDiagrams_View$blackColor = '#333333';
+var _user$project$ChordDiagrams_View$rootColor = '#259577';
+var _user$project$ChordDiagrams_View$muteColor = '#d5939b';
+var _user$project$ChordDiagrams_View$string_stroke = '2';
+var _user$project$ChordDiagrams_View$fret_stroke = '4';
+var _user$project$ChordDiagrams_View$num_strings = 6;
+var _user$project$ChordDiagrams_View$num_frets = 7;
+var _user$project$ChordDiagrams_View$string_space = 32;
+var _user$project$ChordDiagrams_View$fret_length = (_user$project$ChordDiagrams_View$num_strings - 1) * _user$project$ChordDiagrams_View$string_space;
+var _user$project$ChordDiagrams_View$fret_length_ = _elm_lang$core$Basics$toString(_user$project$ChordDiagrams_View$fret_length);
+var _user$project$ChordDiagrams_View$fret_space = 45;
+var _user$project$ChordDiagrams_View$string_length = _user$project$ChordDiagrams_View$num_frets * _user$project$ChordDiagrams_View$fret_space;
+var _user$project$ChordDiagrams_View$string_length_ = _elm_lang$core$Basics$toString(_user$project$ChordDiagrams_View$string_length);
+var _user$project$ChordDiagrams_View$fretY = function (fret) {
+	return _elm_lang$core$Basics$toString(fret * _user$project$ChordDiagrams_View$fret_space);
 };
-var _user$project$Chords_Views$barreRootY = function (fret) {
-	return _elm_lang$core$Basics$toString((fret * _user$project$Chords_Views$fret_space) - 5);
+var _user$project$ChordDiagrams_View$barreRootY = function (fret) {
+	return _elm_lang$core$Basics$toString((fret * _user$project$ChordDiagrams_View$fret_space) - 5);
 };
-var _user$project$Chords_Views$diagram_inset = 20;
-var _user$project$Chords_Views$diagram_inset_ = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_inset);
-var _user$project$Chords_Views$fret = function (ypos) {
+var _user$project$ChordDiagrams_View$diagram_inset = 20;
+var _user$project$ChordDiagrams_View$diagram_inset_ = _elm_lang$core$Basics$toString(_user$project$ChordDiagrams_View$diagram_inset);
+var _user$project$ChordDiagrams_View$fret = function (ypos) {
 	return A2(
 		_elm_lang$svg$Svg$path,
 		{
@@ -10600,47 +12716,47 @@ var _user$project$Chords_Views$fret = function (ypos) {
 					'M',
 					A2(
 						_elm_lang$core$Basics_ops['++'],
-						_user$project$Chords_Views$diagram_inset_,
+						_user$project$ChordDiagrams_View$diagram_inset_,
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							' ',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								ypos,
-								A2(_elm_lang$core$Basics_ops['++'], ' h ', _user$project$Chords_Views$fret_length_)))))),
+								A2(_elm_lang$core$Basics_ops['++'], ' h ', _user$project$ChordDiagrams_View$fret_length_)))))),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Chords_Views$blackColor),
+				_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$ChordDiagrams_View$blackColor),
 				_1: {
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$strokeWidth(_user$project$Chords_Views$fret_stroke),
+					_0: _elm_lang$svg$Svg_Attributes$strokeWidth(_user$project$ChordDiagrams_View$fret_stroke),
 					_1: {ctor: '[]'}
 				}
 			}
 		},
 		{ctor: '[]'});
 };
-var _user$project$Chords_Views$diagram_height = (_user$project$Chords_Views$num_frets * _user$project$Chords_Views$fret_space) + (_user$project$Chords_Views$diagram_inset * 2);
-var _user$project$Chords_Views$diagram_width = ((_user$project$Chords_Views$num_strings - 1) * _user$project$Chords_Views$string_space) + (_user$project$Chords_Views$diagram_inset * 2);
-var _user$project$Chords_Views$fretYs = A2(
+var _user$project$ChordDiagrams_View$diagram_height = (_user$project$ChordDiagrams_View$num_frets * _user$project$ChordDiagrams_View$fret_space) + (_user$project$ChordDiagrams_View$diagram_inset * 2);
+var _user$project$ChordDiagrams_View$diagram_width = ((_user$project$ChordDiagrams_View$num_strings - 1) * _user$project$ChordDiagrams_View$string_space) + (_user$project$ChordDiagrams_View$diagram_inset * 2);
+var _user$project$ChordDiagrams_View$fretYs = A2(
 	_elm_lang$core$List$map,
 	function (s) {
-		return _elm_lang$core$Basics$toString(s + _user$project$Chords_Views$diagram_inset);
+		return _elm_lang$core$Basics$toString(s + _user$project$ChordDiagrams_View$diagram_inset);
 	},
 	A2(
 		_elm_lang$core$List$map,
 		function (f) {
-			return f * _user$project$Chords_Views$fret_space;
+			return f * _user$project$ChordDiagrams_View$fret_space;
 		},
-		A2(_elm_lang$core$List$range, 0, _user$project$Chords_Views$num_frets)));
-var _user$project$Chords_Views$frets = A2(_elm_lang$core$List$map, _user$project$Chords_Views$fret, _user$project$Chords_Views$fretYs);
-var _user$project$Chords_Views$stringX = function (index) {
-	return _elm_lang$core$Basics$toString((index * _user$project$Chords_Views$string_space) + _user$project$Chords_Views$diagram_inset);
+		A2(_elm_lang$core$List$range, 0, _user$project$ChordDiagrams_View$num_frets)));
+var _user$project$ChordDiagrams_View$frets = A2(_elm_lang$core$List$map, _user$project$ChordDiagrams_View$fret, _user$project$ChordDiagrams_View$fretYs);
+var _user$project$ChordDiagrams_View$stringX = function (index) {
+	return _elm_lang$core$Basics$toString((index * _user$project$ChordDiagrams_View$string_space) + _user$project$ChordDiagrams_View$diagram_inset);
 };
-var _user$project$Chords_Views$dot = function (note) {
-	var ycoord = _user$project$Chords_Views$fretY(note.fret);
-	var xcoord = _user$project$Chords_Views$stringX(note.string);
-	var fillColor = note.rootNote ? _user$project$Chords_Views$rootColor : _user$project$Chords_Views$blackColor;
+var _user$project$ChordDiagrams_View$dot = function (note) {
+	var ycoord = _user$project$ChordDiagrams_View$fretY(note.fret);
+	var xcoord = _user$project$ChordDiagrams_View$stringX(note.string);
+	var fillColor = note.rootNote ? _user$project$ChordDiagrams_View$rootColor : _user$project$ChordDiagrams_View$blackColor;
 	return A2(
 		_elm_lang$svg$Svg$g,
 		{ctor: '[]'},
@@ -10705,9 +12821,9 @@ var _user$project$Chords_Views$dot = function (note) {
 			}
 		});
 };
-var _user$project$Chords_Views$ghostDot = function (note) {
-	var ycoord = _user$project$Chords_Views$fretY(note.fret);
-	var xcoord = _user$project$Chords_Views$stringX(note.string);
+var _user$project$ChordDiagrams_View$ghostDot = function (note) {
+	var ycoord = _user$project$ChordDiagrams_View$fretY(note.fret);
+	var xcoord = _user$project$ChordDiagrams_View$stringX(note.string);
 	return A2(
 		_elm_lang$svg$Svg$circle,
 		{
@@ -10721,7 +12837,7 @@ var _user$project$Chords_Views$ghostDot = function (note) {
 					_0: _elm_lang$svg$Svg_Attributes$r('15'),
 					_1: {
 						ctor: '::',
-						_0: _elm_lang$svg$Svg_Attributes$stroke('#aaaaaa'),
+						_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$ChordDiagrams_View$rootColor),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$strokeWidth('2'),
@@ -10737,28 +12853,28 @@ var _user$project$Chords_Views$ghostDot = function (note) {
 		},
 		{ctor: '[]'});
 };
-var _user$project$Chords_Views$barreX = function (startString) {
-	return _elm_lang$core$Basics$toString((startString * _user$project$Chords_Views$string_space) + ((_user$project$Chords_Views$diagram_inset / 2) | 0));
+var _user$project$ChordDiagrams_View$barreX = function (startString) {
+	return _elm_lang$core$Basics$toString((startString * _user$project$ChordDiagrams_View$string_space) + ((_user$project$ChordDiagrams_View$diagram_inset / 2) | 0));
 };
-var _user$project$Chords_Views$barreRootSquare = F2(
+var _user$project$ChordDiagrams_View$barreRootSquare = F2(
 	function (string, fret) {
 		var _p3 = string;
 		if (_p3.ctor === 'Nothing') {
 			return _elm_lang$html$Html$text('');
 		} else {
-			var xcoord = _user$project$Chords_Views$barreX(_p3._0);
-			var ycoord = _user$project$Chords_Views$barreRootY(fret);
+			var xcoord = _user$project$ChordDiagrams_View$barreX(_p3._0);
+			var ycoord = _user$project$ChordDiagrams_View$barreRootY(fret);
 			return A2(
 				_elm_lang$svg$Svg$rect,
 				{
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$rootColor),
+					_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$ChordDiagrams_View$rootColor),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$strokeWidth('6'),
 						_1: {
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$Chords_Views$blackColor),
+							_0: _elm_lang$svg$Svg_Attributes$stroke(_user$project$ChordDiagrams_View$blackColor),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$y(ycoord),
@@ -10782,16 +12898,16 @@ var _user$project$Chords_Views$barreRootSquare = F2(
 				{ctor: '[]'});
 		}
 	});
-var _user$project$Chords_Views$barreWidth = function (barre) {
-	return ((barre.endString - barre.startString) * _user$project$Chords_Views$string_space) + _user$project$Chords_Views$diagram_inset;
+var _user$project$ChordDiagrams_View$barreWidth = function (barre) {
+	return ((barre.endString - barre.startString) * _user$project$ChordDiagrams_View$string_space) + _user$project$ChordDiagrams_View$diagram_inset;
 };
-var _user$project$Chords_Views$barreBlock = function (barre) {
+var _user$project$ChordDiagrams_View$barreBlock = function (barre) {
 	var h = '10';
-	var w_ = _user$project$Chords_Views$barreWidth(barre);
+	var w_ = _user$project$ChordDiagrams_View$barreWidth(barre);
 	var w = _elm_lang$core$Basics$toString(w_);
 	var labelX = _elm_lang$core$Basics$toString(w_ + 2);
-	var ycoord = _user$project$Chords_Views$fretY(barre.fret);
-	var xcoord = _user$project$Chords_Views$barreX(barre.startString);
+	var ycoord = _user$project$ChordDiagrams_View$fretY(barre.fret);
+	var xcoord = _user$project$ChordDiagrams_View$barreX(barre.startString);
 	return A2(
 		_elm_lang$svg$Svg$g,
 		{ctor: '[]'},
@@ -10801,7 +12917,7 @@ var _user$project$Chords_Views$barreBlock = function (barre) {
 				_elm_lang$svg$Svg$rect,
 				{
 					ctor: '::',
-					_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$blackColor),
+					_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$ChordDiagrams_View$blackColor),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$x(xcoord),
@@ -10853,7 +12969,7 @@ var _user$project$Chords_Views$barreBlock = function (barre) {
 											_0: _elm_lang$svg$Svg_Attributes$textAnchor('left'),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$blackColor),
+												_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$ChordDiagrams_View$blackColor),
 												_1: {ctor: '[]'}
 											}
 										}
@@ -10870,29 +12986,29 @@ var _user$project$Chords_Views$barreBlock = function (barre) {
 					}),
 				_1: {
 					ctor: '::',
-					_0: A2(_user$project$Chords_Views$barreRootSquare, barre.rootString, barre.fret),
+					_0: A2(_user$project$ChordDiagrams_View$barreRootSquare, barre.rootString, barre.fret),
 					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
-var _user$project$Chords_Views$drawFingering = function (fingering) {
+var _user$project$ChordDiagrams_View$drawFingering = function (fingering) {
 	var _p4 = fingering;
 	switch (_p4.ctor) {
 		case 'Single':
-			return _user$project$Chords_Views$dot(_p4._0);
+			return _user$project$ChordDiagrams_View$dot(_p4._0);
 		case 'Barred':
-			return _user$project$Chords_Views$barreBlock(_p4._0);
+			return _user$project$ChordDiagrams_View$barreBlock(_p4._0);
 		default:
-			return _user$project$Chords_Views$ghostDot(_p4._0);
+			return _user$project$ChordDiagrams_View$ghostDot(_p4._0);
 	}
 };
-var _user$project$Chords_Views$drawDots = function (stringData) {
-	return A2(_elm_lang$core$List$map, _user$project$Chords_Views$drawFingering, stringData);
+var _user$project$ChordDiagrams_View$drawDots = function (stringData) {
+	return A2(_elm_lang$core$List$map, _user$project$ChordDiagrams_View$drawFingering, stringData);
 };
-var _user$project$Chords_Views$muteX = F2(
+var _user$project$ChordDiagrams_View$muteX = F2(
 	function (stringNum, gotNotes) {
-		var xcoord = _user$project$Chords_Views$stringX(stringNum);
+		var xcoord = _user$project$ChordDiagrams_View$stringX(stringNum);
 		var _p5 = gotNotes;
 		if (_p5 === true) {
 			return _elm_lang$html$Html$text('');
@@ -10905,11 +13021,11 @@ var _user$project$Chords_Views$muteX = F2(
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$svg$Svg_Attributes$y(
-							_elm_lang$core$Basics$toString((_user$project$Chords_Views$diagram_inset / 2) | 0)),
+							_elm_lang$core$Basics$toString((_user$project$ChordDiagrams_View$diagram_inset / 2) | 0)),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$dy(
-								_elm_lang$core$Basics$toString((_user$project$Chords_Views$diagram_inset / 4) | 0)),
+								_elm_lang$core$Basics$toString((_user$project$ChordDiagrams_View$diagram_inset / 4) | 0)),
 							_1: {
 								ctor: '::',
 								_0: _elm_lang$svg$Svg_Attributes$fontSize('20'),
@@ -10918,7 +13034,7 @@ var _user$project$Chords_Views$muteX = F2(
 									_0: _elm_lang$svg$Svg_Attributes$textAnchor('middle'),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$Chords_Views$muteColor),
+										_0: _elm_lang$svg$Svg_Attributes$fill(_user$project$ChordDiagrams_View$muteColor),
 										_1: {ctor: '[]'}
 									}
 								}
@@ -10933,10 +13049,10 @@ var _user$project$Chords_Views$muteX = F2(
 				});
 		}
 	});
-var _user$project$Chords_Views$renderString = F2(
+var _user$project$ChordDiagrams_View$renderString = F2(
 	function (stringData, index) {
-		var notes = A2(_user$project$Chords_Views$hasNotes, index, stringData);
-		var strokeColor = notes ? _user$project$Chords_Views$blackColor : _user$project$Chords_Views$muteColor;
+		var notes = A2(_user$project$ChordDiagrams_View$hasNotes, index, stringData);
+		var strokeColor = notes ? _user$project$ChordDiagrams_View$blackColor : _user$project$ChordDiagrams_View$muteColor;
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{ctor: '[]'},
@@ -10952,20 +13068,20 @@ var _user$project$Chords_Views$renderString = F2(
 								'M',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_user$project$Chords_Views$stringX(index),
+									_user$project$ChordDiagrams_View$stringX(index),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
 										' ',
 										A2(
 											_elm_lang$core$Basics_ops['++'],
-											_user$project$Chords_Views$diagram_inset_,
-											A2(_elm_lang$core$Basics_ops['++'], ' v ', _user$project$Chords_Views$string_length_)))))),
+											_user$project$ChordDiagrams_View$diagram_inset_,
+											A2(_elm_lang$core$Basics_ops['++'], ' v ', _user$project$ChordDiagrams_View$string_length_)))))),
 						_1: {
 							ctor: '::',
 							_0: _elm_lang$svg$Svg_Attributes$stroke(strokeColor),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$strokeWidth(_user$project$Chords_Views$string_stroke),
+								_0: _elm_lang$svg$Svg_Attributes$strokeWidth(_user$project$ChordDiagrams_View$string_stroke),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -10973,23 +13089,23 @@ var _user$project$Chords_Views$renderString = F2(
 					{ctor: '[]'}),
 				_1: {
 					ctor: '::',
-					_0: A2(_user$project$Chords_Views$muteX, index, notes),
+					_0: A2(_user$project$ChordDiagrams_View$muteX, index, notes),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
-var _user$project$Chords_Views$drawStrings = function (stringData) {
-	var render = _user$project$Chords_Views$renderString(stringData);
+var _user$project$ChordDiagrams_View$drawStrings = function (stringData) {
+	var render = _user$project$ChordDiagrams_View$renderString(stringData);
 	return A2(
 		_elm_lang$core$List$map,
 		render,
-		A2(_elm_lang$core$List$range, 0, _user$project$Chords_Views$num_strings - 1));
+		A2(_elm_lang$core$List$range, 0, _user$project$ChordDiagrams_View$num_strings - 1));
 };
-var _user$project$Chords_Views$chordView = F2(
+var _user$project$ChordDiagrams_View$chordView = F2(
 	function (index, theChord) {
-		var xcoord = _elm_lang$core$Basics$toString((10 + _user$project$Chords_Views$diagram_width) * index);
-		var w = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_width);
-		var h = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_height);
+		var xcoord = _elm_lang$core$Basics$toString((10 + _user$project$ChordDiagrams_View$diagram_width) * index);
+		var w = _elm_lang$core$Basics$toString(_user$project$ChordDiagrams_View$diagram_width);
+		var h = _elm_lang$core$Basics$toString(_user$project$ChordDiagrams_View$diagram_height);
 		return A2(
 			_elm_lang$svg$Svg$g,
 			{
@@ -11040,36 +13156,36 @@ var _user$project$Chords_Views$chordView = F2(
 					_0: A2(
 						_elm_lang$svg$Svg$g,
 						{ctor: '[]'},
-						_user$project$Chords_Views$frets),
+						_user$project$ChordDiagrams_View$frets),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$svg$Svg$g,
 							{ctor: '[]'},
-							_user$project$Chords_Views$drawStrings(theChord)),
+							_user$project$ChordDiagrams_View$drawStrings(theChord)),
 						_1: {
 							ctor: '::',
 							_0: A2(
 								_elm_lang$svg$Svg$g,
 								{ctor: '[]'},
-								_user$project$Chords_Views$drawDots(theChord)),
+								_user$project$ChordDiagrams_View$drawDots(theChord)),
 							_1: {ctor: '[]'}
 						}
 					}
 				}
 			});
 	});
-var _user$project$Chords_Views$chordDiagram = F2(
+var _user$project$ChordDiagrams_View$chordDiagram = F2(
 	function (chordForm, chordName) {
-		var h = _elm_lang$core$Basics$toString(_user$project$Chords_Views$diagram_height);
-		var theChords = A2(_user$project$Chords_Views$chordData, chordForm, chordName);
+		var h = _elm_lang$core$Basics$toString(_user$project$ChordDiagrams_View$diagram_height);
+		var theChords = A2(_user$project$ChordDiagrams_View$chordData, chordForm, chordName);
 		var w = _elm_lang$core$Basics$toString(
-			(_user$project$Chords_Views$diagram_width + 10) * _elm_lang$core$List$length(theChords));
+			(_user$project$ChordDiagrams_View$diagram_width + 10) * _elm_lang$core$List$length(theChords));
 		return A2(
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _elm_lang$svg$Svg_Attributes$class('chordViewPane'),
+				_0: _elm_lang$svg$Svg_Attributes$class('chordView'),
 				_1: {ctor: '[]'}
 			},
 			{
@@ -11084,7 +13200,7 @@ var _user$project$Chords_Views$chordDiagram = F2(
 					{
 						ctor: '::',
 						_0: _elm_lang$html$Html$text(
-							A2(_user$project$Chords_Views$chordInfo, chordForm, chordName)),
+							A2(_user$project$ChordDiagrams_View$chordInfo, chordForm, chordName)),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
@@ -11111,101 +13227,13 @@ var _user$project$Chords_Views$chordDiagram = F2(
 								}
 							}
 						},
-						A2(_elm_lang$core$List$indexedMap, _user$project$Chords_Views$chordView, theChords)),
+						A2(_elm_lang$core$List$indexedMap, _user$project$ChordDiagrams_View$chordView, theChords)),
 					_1: {ctor: '[]'}
 				}
 			});
 	});
 
-var _user$project$Pickers_Views$grabNodeText = A2(
-	_elm_lang$core$Json_Decode$at,
-	{
-		ctor: '::',
-		_0: 'target',
-		_1: {
-			ctor: '::',
-			_0: 'textContent',
-			_1: {ctor: '[]'}
-		}
-	},
-	_elm_lang$core$Json_Decode$string);
-var _user$project$Pickers_Views$onFormSelect = function (node) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Pickers_Views$grabNodeText));
-};
-var _user$project$Pickers_Views$formListItem = F2(
-	function (selectedForm, form) {
-		return A2(
-			_elm_lang$html$Html$li,
-			{
-				ctor: '::',
-				_0: _user$project$Pickers_Views$onFormSelect(_user$project$Messages$SelectForm),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$classList(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'formList__item', _1: true},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'formList__item--selected',
-									_1: _elm_lang$core$Native_Utils.eq(selectedForm, form)
-								},
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(form),
-				_1: {ctor: '[]'}
-			});
-	});
-var _user$project$Pickers_Views$onChordSelect = function (node) {
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'click',
-		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Pickers_Views$grabNodeText));
-};
-var _user$project$Pickers_Views$chordListItem = F2(
-	function (selectedChord, chord) {
-		return A2(
-			_elm_lang$html$Html$li,
-			{
-				ctor: '::',
-				_0: _user$project$Pickers_Views$onChordSelect(_user$project$Messages$SelectChord),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$classList(
-						{
-							ctor: '::',
-							_0: {ctor: '_Tuple2', _0: 'chordList__item', _1: true},
-							_1: {
-								ctor: '::',
-								_0: {
-									ctor: '_Tuple2',
-									_0: 'chordList__item--selected',
-									_1: _elm_lang$core$Native_Utils.eq(selectedChord, chord)
-								},
-								_1: {ctor: '[]'}
-							}
-						}),
-					_1: {ctor: '[]'}
-				}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(chord),
-				_1: {ctor: '[]'}
-			});
-	});
-var _user$project$Pickers_Views$keys = {
+var _user$project$Pickers_Data$keys = {
 	ctor: '::',
 	_0: 'Ab',
 	_1: {
@@ -11290,7 +13318,7 @@ var _user$project$Pickers_Views$keys = {
 		}
 	}
 };
-var _user$project$Pickers_Views$chordForms = {
+var _user$project$Pickers_Data$chordForms = {
 	ctor: '::',
 	_0: 'I',
 	_1: {
@@ -11303,45 +13331,7 @@ var _user$project$Pickers_Views$chordForms = {
 		}
 	}
 };
-var _user$project$Pickers_Views$formListView = function (selectedForm) {
-	var itemMapper = _user$project$Pickers_Views$formListItem(selectedForm);
-	var items = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Views$chordForms);
-	return A2(
-		_elm_lang$html$Html$section,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('formList'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$h1,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('formList__header contentTitle'),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Form'),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$ul,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('formList__list'),
-						_1: {ctor: '[]'}
-					},
-					items),
-				_1: {ctor: '[]'}
-			}
-		});
-};
-var _user$project$Pickers_Views$chordNames = {
+var _user$project$Pickers_Data$chordNames = {
 	ctor: '::',
 	_0: 'Major',
 	_1: {
@@ -11450,14 +13440,394 @@ var _user$project$Pickers_Views$chordNames = {
 		}
 	}
 };
-var _user$project$Pickers_Views$chordListView = function (selectedChord) {
-	var itemMapper = _user$project$Pickers_Views$chordListItem(selectedChord);
-	var chords = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Views$chordNames);
+
+var _user$project$Pickers_Views$listView = F2(
+	function (classSuffix, items) {
+		var baseClass = A2(_elm_lang$core$Basics_ops['++'], classSuffix, 'List');
+		var headerClass = A2(_elm_lang$core$Basics_ops['++'], baseClass, '__header contentTitle');
+		var listClass = A2(_elm_lang$core$Basics_ops['++'], baseClass, '__list');
+		return A2(
+			_elm_lang$html$Html$section,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class(baseClass),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h1,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class(headerClass),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(classSuffix),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$ul,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class(listClass),
+							_1: {ctor: '[]'}
+						},
+						items),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _user$project$Pickers_Views$formListView = function (items) {
+	return A2(_user$project$Pickers_Views$listView, 'form', items);
+};
+var _user$project$Pickers_Views$chordListView = function (chords) {
+	return A2(_user$project$Pickers_Views$listView, 'chords', chords);
+};
+var _user$project$Pickers_Views$testList = F2(
+	function (selectedThings, testThing) {
+		return A3(_elm_lang$core$Basics$flip, _elm_lang$core$List$member, selectedThings, testThing);
+	});
+var _user$project$Pickers_Views$testStr = F2(
+	function (a, b) {
+		return _elm_lang$core$Native_Utils.eq(a, b);
+	});
+var _user$project$Pickers_Views$grabNodeText = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'target',
+		_1: {
+			ctor: '::',
+			_0: 'textContent',
+			_1: {ctor: '[]'}
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _user$project$Pickers_Views$onChordSelect = function (node) {
 	return A2(
-		_elm_lang$html$Html$section,
+		_elm_lang$html$Html_Events$on,
+		'click',
+		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Pickers_Views$grabNodeText));
+};
+var _user$project$Pickers_Views$chordListItem = F3(
+	function (msg, test, chord) {
+		return A2(
+			_elm_lang$html$Html$li,
+			{
+				ctor: '::',
+				_0: _user$project$Pickers_Views$onChordSelect(msg),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'chordList__item', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'chordList__item--selected',
+									_1: test(chord)
+								},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(chord),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Pickers_Views$singleSelectChordList = F2(
+	function (msg, selectedChord) {
+		var test = _user$project$Pickers_Views$testStr(selectedChord);
+		var mapper = A2(_user$project$Pickers_Views$chordListItem, msg, test);
+		var chords = A2(_elm_lang$core$List$map, mapper, _user$project$Pickers_Data$chordNames);
+		return _user$project$Pickers_Views$chordListView(chords);
+	});
+var _user$project$Pickers_Views$multiSelectChordList = F2(
+	function (msg, selectedChords) {
+		var test = _user$project$Pickers_Views$testList(selectedChords);
+		var itemMapper = A2(_user$project$Pickers_Views$chordListItem, msg, test);
+		var chords = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Data$chordNames);
+		return _user$project$Pickers_Views$chordListView(chords);
+	});
+var _user$project$Pickers_Views$onFormSelect = function (node) {
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'click',
+		A2(_elm_lang$core$Json_Decode$map, node, _user$project$Pickers_Views$grabNodeText));
+};
+var _user$project$Pickers_Views$formListItem = F3(
+	function (msg, test, form) {
+		return A2(
+			_elm_lang$html$Html$li,
+			{
+				ctor: '::',
+				_0: _user$project$Pickers_Views$onFormSelect(msg),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'formList__item', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'formList__item--selected',
+									_1: test(form)
+								},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text(form),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Pickers_Views$singleSelectFormList = F2(
+	function (msg, selectedForm) {
+		var test = _user$project$Pickers_Views$testStr(selectedForm);
+		var itemMapper = A2(_user$project$Pickers_Views$formListItem, msg, test);
+		var formItems = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Data$chordForms);
+		return _user$project$Pickers_Views$formListView(formItems);
+	});
+var _user$project$Pickers_Views$multiSelectFormList = F2(
+	function (msg, selectedForms) {
+		var test = _user$project$Pickers_Views$testList(selectedForms);
+		var itemMapper = A2(_user$project$Pickers_Views$formListItem, msg, test);
+		var formItems = A2(_elm_lang$core$List$map, itemMapper, _user$project$Pickers_Data$chordForms);
+		return _user$project$Pickers_Views$formListView(formItems);
+	});
+
+var _user$project$ChordBrowser_View$rootView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('chordList'),
+			_0: _elm_lang$html$Html_Attributes$class('contentPane'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('pickerViews'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(_user$project$Pickers_Views$singleSelectChordList, _user$project$ChordBrowser_Messages$SelectChord, model.selectedChord),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Pickers_Views$singleSelectFormList, _user$project$ChordBrowser_Messages$SelectForm, model.selectedForm),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('chordViewPane'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(_user$project$ChordDiagrams_View$chordDiagram, model.selectedForm, model.selectedChord),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+
+var _user$project$ChordFlashcards_View$formString = function (form) {
+	var _p0 = form;
+	if (_p0.ctor === 'Just') {
+		return A2(_elm_lang$core$Basics_ops['++'], 'Form ', _p0._0);
+	} else {
+		return '??';
+	}
+};
+var _user$project$ChordFlashcards_View$chordString = function (chord) {
+	var _p1 = chord;
+	if (_p1.ctor === 'Just') {
+		return _p1._0;
+	} else {
+		return '??';
+	}
+};
+var _user$project$ChordFlashcards_View$diagramView = function (model) {
+	var _p2 = {ctor: '_Tuple2', _0: model.currentForm, _1: model.currentChord};
+	if ((_p2._0.ctor === 'Just') && (_p2._1.ctor === 'Just')) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('flashcards__card flashcards__card--diagram'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(_user$project$ChordDiagrams_View$chordDiagram, _p2._0._0, _p2._1._0),
+				_1: {ctor: '[]'}
+			});
+	} else {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('flashcards__card flashcards__card--diagram'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html$text('Cannot Make Diagram'),
+				_1: {ctor: '[]'}
+			});
+	}
+};
+var _user$project$ChordFlashcards_View$chordInfoView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('flashcards__card flashcards__card--info'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$p,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('flashcards__chordFormLabel'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_user$project$ChordFlashcards_View$formString(model.currentForm)),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$p,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('flashcards__chordNameLabel'),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(
+							_user$project$ChordFlashcards_View$chordString(model.currentChord)),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$ChordFlashcards_View$cards = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('flashcardsHolder'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'flippable', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple2',
+									_0: 'flipped',
+									_1: !_elm_lang$core$Native_Utils.eq(model.cardState, _user$project$ChordFlashcards_Model$ChordName)
+								},
+								_1: {ctor: '[]'}
+							}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _user$project$ChordFlashcards_View$chordInfoView(model),
+					_1: {
+						ctor: '::',
+						_0: _user$project$ChordFlashcards_View$diagramView(model),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$ChordFlashcards_View$cardView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$ChordFlashcards_View$cards(model),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$ChordFlashcards_Messages$StopTimer),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('flashcardInstructions__stopButton'),
+							_1: {ctor: '[]'}
+						}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Stop'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$ChordFlashcards_View$instructionsCopy = '\nSelect the chords and forms you want to study, then hit the \'Start\' button.\nYou\'ll be shown the chord name and form for five seconds, then the chord \ndiagram. Once you\'ve seen all the chords you\'ve picked, you\'ll see this again.\n';
+var _user$project$ChordFlashcards_View$instructionsView = function (model) {
+	var disable = _elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$List$length(model.selectedForms),
+		0) || _elm_lang$core$Native_Utils.eq(
+		_elm_lang$core$List$length(model.selectedChords),
+		0);
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('flashcardInstructions'),
 			_1: {ctor: '[]'}
 		},
 		{
@@ -11466,49 +13836,198 @@ var _user$project$Pickers_Views$chordListView = function (selectedChord) {
 				_elm_lang$html$Html$h1,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('chordList__header contentTitle'),
+					_0: _elm_lang$html$Html_Attributes$class('flashcardInstructions__header'),
 					_1: {ctor: '[]'}
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('Chord'),
+					_0: _elm_lang$html$Html$text('Flashcard Training'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$ul,
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('chordList__list'),
+						_0: _elm_lang$html$Html$text(_user$project$ChordFlashcards_View$instructionsCopy),
 						_1: {ctor: '[]'}
-					},
-					chords),
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$button,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onClick(_user$project$ChordFlashcards_Messages$StartTimer),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('flashcardInstructions__startButton'),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$disabled(disable),
+									_1: {ctor: '[]'}
+								}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Start'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$ChordFlashcards_View$contentView = function (model) {
+	var innerView = model.timerRunning ? _user$project$ChordFlashcards_View$cardView(model) : _user$project$ChordFlashcards_View$instructionsView(model);
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('flashcardsContent'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: innerView,
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$ChordFlashcards_View$rootView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('contentPane'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('pickerViews'),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(_user$project$Pickers_Views$multiSelectChordList, _user$project$ChordFlashcards_Messages$ChordToggle, model.selectedChords),
+					_1: {
+						ctor: '::',
+						_0: A2(_user$project$Pickers_Views$multiSelectFormList, _user$project$ChordFlashcards_Messages$FormToggle, model.selectedForms),
+						_1: {ctor: '[]'}
+					}
+				}),
+			_1: {
+				ctor: '::',
+				_0: _user$project$ChordFlashcards_View$contentView(model),
 				_1: {ctor: '[]'}
 			}
 		});
 };
-var _user$project$Pickers_Views$pickerViews = F2(
-	function (selectedForm, selectedChord) {
+
+var _user$project$App_View$reverseRoute = function (page) {
+	var _p0 = page;
+	if (_p0.ctor === 'FlashcardPage') {
+		return '#flashcards';
+	} else {
+		return '#browse';
+	}
+};
+var _user$project$App_View$viewForPage = function (model) {
+	var _p1 = model.page;
+	if (_p1.ctor === 'BrowsePage') {
 		return A2(
-			_elm_lang$html$Html$div,
+			_elm_lang$html$Html$map,
+			_user$project$App_Messages$BrowserMsg,
+			_user$project$ChordBrowser_View$rootView(model.browser));
+	} else {
+		return A2(
+			_elm_lang$html$Html$map,
+			_user$project$App_Messages$FlashcardsMsg,
+			_user$project$ChordFlashcards_View$rootView(model.flashcards));
+	}
+};
+var _user$project$App_View$navItem = F2(
+	function (activeLink, linkData) {
+		var _p2 = linkData;
+		var url = _p2._0;
+		var label = _p2._1;
+		return A2(
+			_elm_lang$html$Html$li,
 			{
 				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('pickerViews'),
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'appNavigation__item', _1: true},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple2',
+								_0: 'appNavigation__item--active',
+								_1: _elm_lang$core$Native_Utils.eq(url, activeLink)
+							},
+							_1: {ctor: '[]'}
+						}
+					}),
 				_1: {ctor: '[]'}
 			},
 			{
 				ctor: '::',
-				_0: _user$project$Pickers_Views$chordListView(selectedChord),
-				_1: {
-					ctor: '::',
-					_0: _user$project$Pickers_Views$formListView(selectedForm),
-					_1: {ctor: '[]'}
-				}
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$href(url),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(label),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
 			});
 	});
-
-var _user$project$PageElements_Views$pageFooter = A2(
+var _user$project$App_View$navBar = function (activeURL) {
+	var navMapper = _user$project$App_View$navItem(activeURL);
+	return A2(
+		_elm_lang$html$Html$nav,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('appNavigation outerContainer'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$ul,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$class('appNavigation__list'),
+					_1: {ctor: '[]'}
+				},
+				A2(
+					_elm_lang$core$List$map,
+					navMapper,
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: '#browse', _1: 'Browse'},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: '#flashcards', _1: 'Flashcards'},
+							_1: {ctor: '[]'}
+						}
+					})),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$App_View$pageFooter = A2(
 	_elm_lang$html$Html$footer,
 	{
 		ctor: '::',
@@ -11596,7 +14115,7 @@ var _user$project$PageElements_Views$pageFooter = A2(
 								},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text('github'),
+									_0: _elm_lang$html$Html$text('GitHub'),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
@@ -11606,7 +14125,7 @@ var _user$project$PageElements_Views$pageFooter = A2(
 			}
 		}
 	});
-var _user$project$PageElements_Views$pageHeader = A2(
+var _user$project$App_View$pageHeader = A2(
 	_elm_lang$html$Html$header,
 	{
 		ctor: '::',
@@ -11629,11 +14148,7 @@ var _user$project$PageElements_Views$pageHeader = A2(
 			}),
 		_1: {ctor: '[]'}
 	});
-
-var _user$project$ChordBook$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$none;
-};
-var _user$project$ChordBook$view = function (model) {
+var _user$project$App_View$rootView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
@@ -11643,68 +14158,28 @@ var _user$project$ChordBook$view = function (model) {
 		},
 		{
 			ctor: '::',
-			_0: _user$project$PageElements_Views$pageHeader,
+			_0: _user$project$App_View$pageHeader,
 			_1: {
 				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('contentPane'),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(_user$project$Pickers_Views$pickerViews, model.selectedForm, model.selectedChord),
-						_1: {
-							ctor: '::',
-							_0: A2(_user$project$Chords_Views$chordDiagram, model.selectedForm, model.selectedChord),
-							_1: {ctor: '[]'}
-						}
-					}),
+				_0: _user$project$App_View$navBar(
+					_user$project$App_View$reverseRoute(model.page)),
 				_1: {
 					ctor: '::',
-					_0: _user$project$PageElements_Views$pageFooter,
-					_1: {ctor: '[]'}
+					_0: _user$project$App_View$viewForPage(model),
+					_1: {
+						ctor: '::',
+						_0: _user$project$App_View$pageFooter,
+						_1: {ctor: '[]'}
+					}
 				}
 			}
 		});
 };
-var _user$project$ChordBook$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'NoOp':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-			case 'SelectChord':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedChord: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{selectedForm: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
-var _user$project$ChordBook$initialModel = {selectedChord: 'Major', selectedForm: 'II', selectedKey: 'G'};
-var _user$project$ChordBook$init = {ctor: '_Tuple2', _0: _user$project$ChordBook$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$ChordBook$main = _elm_lang$html$Html$program(
-	{init: _user$project$ChordBook$init, view: _user$project$ChordBook$view, update: _user$project$ChordBook$update, subscriptions: _user$project$ChordBook$subscriptions})();
-var _user$project$ChordBook$Model = F3(
-	function (a, b, c) {
-		return {selectedChord: a, selectedForm: b, selectedKey: c};
-	});
 
-var _user$project$Main$main = _elm_lang$html$Html$program(
-	{init: _user$project$ChordBook$init, view: _user$project$ChordBook$view, update: _user$project$ChordBook$update, subscriptions: _user$project$ChordBook$subscriptions})();
+var _user$project$Main$main = A2(
+	_elm_lang$navigation$Navigation$program,
+	_user$project$App_Messages$UrlChange,
+	{init: _user$project$App_Model$init, view: _user$project$App_View$rootView, update: _user$project$App_Update$update, subscriptions: _user$project$App_Subscriptions$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};

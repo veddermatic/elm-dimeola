@@ -391,7 +391,7 @@ ghostDot note =
             [ cx xcoord
             , cy ycoord
             , r "15"
-            , stroke "#aaaaaa"
+            , stroke rootColor
             , strokeWidth "2"
             , fill "none"
             ]
@@ -554,11 +554,10 @@ chordDiagram chordForm chordName =
             toString ((diagram_width + 10) * (List.length theChords))
     in
         div
-            [ class "chordViewPane" ]
+            [ class "chordView" ]
             [ h1
                 [ class "currentChord__title contentTitle" ]
                 [ text (chordInfo chordForm chordName) ]
-              -- , ChordDiagrams.chordDiagram model.selectedForm model.selectedChord
             , Svg.svg
                 [ width w, height h, viewBox ("0 0 " ++ w ++ " " ++ h) ]
                 (List.indexedMap chordView theChords)

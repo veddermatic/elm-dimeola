@@ -1,9 +1,13 @@
 module App.Subscriptions exposing (subscriptions)
 
 import App.Model exposing (Model)
-import App.Messages exposing (Msg)
+import App.Messages exposing (Msg(..))
+import ChordFlashcards.Subscriptions
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
-
+    let
+        timerSub =
+            ChordFlashcards.Subscriptions.subscriptions model.flashcards
+    in
+        Sub.batch [ Sub.map FlashcardsMsg timerSub ]

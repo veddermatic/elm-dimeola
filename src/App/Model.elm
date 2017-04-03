@@ -1,4 +1,4 @@
-module App.Model exposing (Model, init, Page(..))
+module App.Model exposing (Model, init, Page(..), pageFromHash)
 
 import Navigation
 import App.Messages exposing (Msg)
@@ -19,9 +19,9 @@ type alias Model =
     }
 
 
-initialModel : Model
-initialModel =
-    { page = BrowsePage 
+initialModel : String ->  Model
+initialModel locationHash =
+    { page = pageFromHash locationHash 
     , browser = ChordBrowser.Model.init
     , flashcards = ChordFlashcards.Model.init
     }
@@ -29,4 +29,17 @@ initialModel =
 
 init : Navigation.Location -> ( Model, Cmd Msg )
 init location =
-    ( initialModel, Cmd.none )
+    ( initialModel location.hash, Cmd.none )
+
+
+pageFromHash : String -> Page
+pageFromHash hash =
+    case hash of
+        "#flashcards" ->
+            FlashcardPage
+
+        "#browse" ->
+            BrowsePage
+
+        _ ->
+            BrowsePage
