@@ -13209,21 +13209,25 @@ var _user$project$ChordDiagrams_View$chordDiagram = F2(
 						_elm_lang$svg$Svg$svg,
 						{
 							ctor: '::',
-							_0: _elm_lang$svg$Svg_Attributes$width(w),
+							_0: _elm_lang$svg$Svg_Attributes$class('svgDiagram'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$svg$Svg_Attributes$height(h),
+								_0: _elm_lang$svg$Svg_Attributes$width(w),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$svg$Svg_Attributes$viewBox(
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											'0 0 ',
+									_0: _elm_lang$svg$Svg_Attributes$height(h),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$svg$Svg_Attributes$viewBox(
 											A2(
 												_elm_lang$core$Basics_ops['++'],
-												w,
-												A2(_elm_lang$core$Basics_ops['++'], ' ', h)))),
-									_1: {ctor: '[]'}
+												'0 0 ',
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													w,
+													A2(_elm_lang$core$Basics_ops['++'], ' ', h)))),
+										_1: {ctor: '[]'}
+									}
 								}
 							}
 						},
@@ -13485,7 +13489,7 @@ var _user$project$Pickers_Views$formListView = function (items) {
 	return A2(_user$project$Pickers_Views$listView, 'form', items);
 };
 var _user$project$Pickers_Views$chordListView = function (chords) {
-	return A2(_user$project$Pickers_Views$listView, 'chords', chords);
+	return A2(_user$project$Pickers_Views$listView, 'chord', chords);
 };
 var _user$project$Pickers_Views$testList = F2(
 	function (selectedThings, testThing) {

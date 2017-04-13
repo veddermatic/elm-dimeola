@@ -142,7 +142,7 @@ multiSelectChordList msg selectedChords =
 
 chordListView : List (Html msg) -> Html msg
 chordListView chords =
-    listView "chords" chords
+    listView "chord" chords
 
 
 formListView : List (Html msg) -> Html msg

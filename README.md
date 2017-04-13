@@ -23,9 +23,10 @@ Things that are done:
 
 - Code to draw chord diagrams
 - Ability to pick a chord shape and form and see it
+- Flashcard mode: pick a form and it will cycle through all the shapes, showing the name for _n_ seconds, then flip to show the diagram.
+- Made the UI better on my phone.
 
 Things I want to do:
 
 - Add all forms up through __X__
-- Flashcard mode: pick a form and it will cycle through all the shapes, showing the name for _n_ seconds, then flip to show the diagram.
 - Add arpeggio display. Pick a key, it will show you the notes of the arpeggios.

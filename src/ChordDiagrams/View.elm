@@ -559,6 +559,6 @@ chordDiagram chordForm chordName =
                 [ class "currentChord__title contentTitle" ]
                 [ text (chordInfo chordForm chordName) ]
             , Svg.svg
-                [ width w, height h, viewBox ("0 0 " ++ w ++ " " ++ h) ]
+                [ class "svgDiagram", width w, height h, viewBox ("0 0 " ++ w ++ " " ++ h) ]
                 (List.indexedMap chordView theChords)
             ]

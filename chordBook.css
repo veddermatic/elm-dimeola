@@ -132,6 +132,7 @@ ul {
 }
 
 .chordList__item {
+    white-space: nowrap;
     display: inline-block;
     border-bottom: 1px solid #999;
     padding: 8px 16px;
@@ -153,12 +154,13 @@ ul {
     flex: 1;
 }
 .formList__item {
+    white-space: nowrap;
     display: inline-block;
     border-bottom: 1px solid #999;
     padding: 8px 16px;
     margin: 8px;
     cursor: pointer;
-    min-width: 48;
+    min-width: 48px;
 }
 .formList__item--selected {
     font-weight: bold;
@@ -249,5 +251,80 @@ ul {
 
 .flashcards__card--diagram {
     transform: rotateY(-180deg);
+}
+
+@media (max-width: 650px) {
+
+    .appHeader {
+        height: 48px;
+    }
+    .appHeader__title {
+        font-size: 18px;
+    }
+    .appNavigation {
+        height: 36px;
+    }
+    .appNavigation__item a {
+            height: 36px;
+            line-height: 36px;
+    }
+
+    .contentTitle {
+        font-size: 18px;
+    }
+
+    .contentPane {
+        flex-direction: column;
+    }
+
+    .pickerViews {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .formList,
+    .chordList {
+        width: 100%;
+        flex: 1;
+    }
+
+    .formList__list,
+    .chordList__list {
+        width: 100%;
+        overflow-x: auto;
+        display: flex;
+    }
+
+    .chordList__item, 
+    .formList__item {
+        min-width: auto;
+     }
+
+    .chordViewPane {
+        width: 100%;
+    }
+
+    .appFooter {
+        flex-direction: column;
+        height: auto;
+        padding: 16px 0;
+    }
+
+    .svgDiagram {
+        transform: scale(0.8);
+    }
+    .flashcardsContent {
+        min-width: 320px;
+    }
+
+    .flashcardsHolder {
+        height: 320px;
+        width: 320px;
+    }
+
+    .flashcards__card {
+        height: 320px;
+        width: 320px;
+    }
 }
 
